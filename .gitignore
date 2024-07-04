@@ -1,3 +1,6 @@
+# development folders
+build
+
 # Prerequisites
 *.d
 
