@@ -28,28 +28,15 @@ void start_recording(Timer* timer);
 void stop_recording(Timer* timer);
 
 /**
- * Returns the elapsed time in microseconds.
+ * Prints the elapsed time in a human-readable format.
  *
- * @param timer The timer object.
- * @return Elapsed time in microseconds.
+ * @note if the timer has not been stopped yet, a warning message will be printed.
+ * @note if the number of inferences is greater than 0, the average time per inference and the average FPS rate will be printed.
+ * 
+ * @param timer The timer object to be printed.
+ * @param number_of_inferences The number of inferences to calculate the average time per inference.
  */
-long get_elapsed_time_us(const Timer* timer);
-
-/**
- * Returns the elapsed time in milliseconds.
- *
- * @param timer The timer object.
- * @return Elapsed time in milliseconds.
- */
-long get_elapsed_time_ms(const Timer* timer);
-
-/**
- * Returns the elapsed time in seconds.
- *
- * @param timer The timer object.
- * @return Elapsed time in seconds.
- */
-float get_elapsed_time_s(const Timer* timer);
+void print_human_readable_stats(const Timer *timer, long number_of_inferences);
 
 
 #endif // TIMER
