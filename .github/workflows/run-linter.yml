@@ -15,8 +15,8 @@ jobs:
 
       - name: Install cpplint
         run: |
-          apt-get update
-          apt-get install -y cpplint
+          sudo apt-get update
+          sudo apt-get install -y cpplint
 
       - name: Run linter
         run: find . -regex '.*\.\(cpp\|cc\|c\|h\|hpp\)' -exec cpplint {} +
