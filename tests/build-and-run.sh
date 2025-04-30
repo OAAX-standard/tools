@@ -16,13 +16,15 @@ rm -rf $BUILD_DIR || true
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
-CMAKE_TOOLCHAIN_FILE="$HERE/../toolchains/x86_64-to-windows.cmake"
+# NOTE: Uncomment the following line to use a custom toolchain file
+# CMAKE_TOOLCHAIN_FILE="$HERE/../toolchains/x86_64-to-windows.cmake"
 
 # Run CMake to configure the project
 cmake .. -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE
 
 # Build the project
-make
+cmake --build . --config Release
 
 # Run the unit tests binary
+# NOTE: Change the path to the unit tests binary if necessary
 ./unit_tests

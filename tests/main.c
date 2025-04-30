@@ -3,7 +3,12 @@
 
 #include <math.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "cp_platform.h"  // NOLINT(build/include_subdir)
 #include "logger.h"       // NOLINT(build/include_subdir)
@@ -80,7 +85,7 @@ void test_human_memory_size() {
   uint64_t test_values[] = {0,       512,        1024,
                             1048576, 1073741824, 1099511627776ULL};
   for (int i = 0; i < 6; ++i) {
-    printf("%lu bytes -> %s\n", (uint64_t) test_values[i],
+    printf("%lu bytes -> %s\n", (uint64_t)test_values[i],
            human_memory_size(test_values[i]));
   }
 }
