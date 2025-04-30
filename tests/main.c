@@ -80,7 +80,7 @@ void test_human_memory_size() {
   uint64_t test_values[] = {0,       512,        1024,
                             1048576, 1073741824, 1099511627776ULL};
   for (int i = 0; i < 6; ++i) {
-    printf("%llu bytes -> %s\n", (uint64_t)test_values[i],
+    printf("%lu bytes -> %s\n", (uint64_t) test_values[i],
            human_memory_size(test_values[i]));
   }
 }

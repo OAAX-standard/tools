@@ -6,7 +6,8 @@ set -e
 # Change to the script's directory
 cd $(dirname "$0")
 
-BUILD_DIR=build
+HERE=$(pwd)
+BUILD_DIR="$HERE/build"
 
 # Remove previous build directory if it exists
 rm -rf $BUILD_DIR || true
@@ -15,8 +16,10 @@ rm -rf $BUILD_DIR || true
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
+CMAKE_TOOLCHAIN_FILE="$HERE/../toolchains/x86_64-to-windows.cmake"
+
 # Run CMake to configure the project
-cmake ..
+cmake .. -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE
 
 # Build the project
 make

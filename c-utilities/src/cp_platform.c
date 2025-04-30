@@ -4,6 +4,8 @@
 #include "cp_platform.h"  // NOLINT(build/include_subdir)
 
 #ifdef _WIN32
+#include <psapi.h>  // Required for PROCESS_MEMORY_COUNTERS_EX
+
 void cp_mutex_init(cp_mutex_t *mutex) {
   *mutex = CreateMutex(NULL, FALSE, NULL);
 }
@@ -37,7 +39,6 @@ int64_t cp_get_current_us() {
 
 void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
                          uint64_t *total_releasable) {
-#ifdef _WIN32
   PROCESS_MEMORY_COUNTERS_EX pmc;
   if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS *)&pmc,
                            sizeof(pmc))) {
@@ -47,15 +48,18 @@ void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
   } else {
     *total_allocated = *total_free = *total_releasable = 0;
   }
-#else
-  struct mallinfo2 mi = mallinfo2();
-  *total_allocated = mi.uordblks;
-  *total_free = mi.fordblks;
-  *total_releasable = mi.keepcost;
-#endif
 }
 
+void cp_sleep_ms(uint32_t milliseconds) { Sleep(milliseconds); }
+
 #else
+
+void cp_sleep_ms(uint32_t milliseconds) {
+  struct timespec ts;
+  ts.tv_sec = milliseconds / 1000;
+  ts.tv_nsec = (milliseconds % 1000) * 1000000;
+  nanosleep(&ts, NULL);
+}
 
 void cp_mutex_init(cp_mutex_t *mutex) { pthread_mutex_init(mutex, NULL); }
 
@@ -82,7 +86,7 @@ void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
   struct mallinfo mi = mallinfo();
   *total_allocated = mi.uordblks;
   *total_free = mi.fordblks;
-  *total_releasable = 0;  // Not available on Linux
+  *total_releasable = mi.keepcost;
 }
 
 #endif

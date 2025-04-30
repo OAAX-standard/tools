@@ -13,7 +13,9 @@
 #include <windows.h>
 typedef HANDLE cp_mutex_t;
 #else
+#include <malloc.h>
 #include <pthread.h>
+#include <sys/time.h>
 typedef pthread_mutex_t cp_mutex_t;
 #endif
 
@@ -35,5 +37,8 @@ int64_t cp_get_current_us();
 // Cross-platform memory usage retrieval
 void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
                          uint64_t *total_releasable);
+
+// Cross-platform sleep function (milliseconds)
+void cp_sleep_ms(uint32_t milliseconds);
 
 #endif  // C_UTILITIES_INCLUDE_CP_PLATFORM_H_
