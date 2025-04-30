@@ -92,8 +92,13 @@ void log_message(Logger *logger, LogLevel level, const char *format, ...) {
   struct tm *localTime =
       cp_localtime(&now, &localTimeData);  // Use cross-platform localtime
 
-  char timeStr[20];
+  char timeStr[30];  // Increased size to accommodate microseconds
   strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", localTime);
+
+  int64_t currentTime = cp_get_current_us();  // Use cross-platform time
+  char timeWithMicroseconds[40];
+  snprintf(timeWithMicroseconds, sizeof(timeWithMicroseconds), "%s.%06ld",
+           timeStr, currentTime % 1000000);
 
   va_list args;
   va_start(args, format);
@@ -102,12 +107,13 @@ void log_message(Logger *logger, LogLevel level, const char *format, ...) {
   char message[1024];
   vsnprintf(message, sizeof(message), format, args);
   if (level >= logger->file_level && logger->log_file != NULL) {
-    fprintf(logger->log_file, "[%s] %s: %s\n", timeStr, level_str, message);
+    fprintf(logger->log_file, "[%s] %s: %s\n", timeWithMicroseconds, level_str,
+            message);
   }
 
   // Print to console if the log level is high enough
   if (level >= logger->console_level) {
-    printf("[%s] %s: %s\n", timeStr, level_str, message);
+    printf("[%s] %s: %s\n", timeWithMicroseconds, level_str, message);
   }
 
   va_end(args);
