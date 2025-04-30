@@ -4,9 +4,8 @@ on:
   push:
 
 jobs:
-  build-runtimes:
-    runs-on: ubuntu-latest
-
+  run-linter:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
