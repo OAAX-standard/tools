@@ -15,6 +15,16 @@
 #include "memory.h"       // NOLINT(build/include_subdir)
 #include "timer.h"        // NOLINT(build/include_subdir)
 
+#ifdef _WIN32
+#ifdef _MSC_VER
+#define UINT64_FORMAT "%I64u"
+#else
+#define UINT64_FORMAT "%llu"
+#endif
+#else
+#define UINT64_FORMAT "%lu"
+#endif
+
 // Test basic timer functionality: start, wait, stop, and print stats
 void test_timer_basic() {
   printf("Running test_timer_basic...\n");
@@ -85,7 +95,7 @@ void test_human_memory_size() {
   uint64_t test_values[] = {0,       512,        1024,
                             1048576, 1073741824, 1099511627776ULL};
   for (int i = 0; i < 6; ++i) {
-    printf("%lu bytes -> %s\n", (uint64_t)test_values[i],
+    printf(UINT64_FORMAT " bytes -> %s\n", (uint64_t)test_values[i],
            human_memory_size(test_values[i]));
   }
 }
