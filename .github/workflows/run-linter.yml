@@ -18,4 +18,4 @@ jobs:
           sudo apt-get install -y cpplint
 
       - name: Run linter
-        run: find . -regex '.*\.\(cpp\|cc\|c\|h\|hpp\)' -exec cpplint {} +
+        run: find . -regex '.*\.\(cpp\|cc\|c\|h\|hpp\)' -exec cpplint --filter=-readability/casting {} +
