@@ -1,16 +1,21 @@
-#include "logger.h"
-#include "memory.h"
-#include "timer.h"
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
+
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include "cp_platform.h"  // NOLINT(build/include_subdir)
+#include "logger.h"       // NOLINT(build/include_subdir)
+#include "memory.h"       // NOLINT(build/include_subdir)
+#include "timer.h"        // NOLINT(build/include_subdir)
 
 // Test basic timer functionality: start, wait, stop, and print stats
 void test_timer_basic() {
   printf("Running test_timer_basic...\n");
   Timer timer;
   start_recording(&timer);
-  usleep(500000); // 0.5 seconds
+  cp_sleep_ms(500);  // Cross-platform sleep for 0.5 seconds
   stop_recording(&timer);
   print_human_readable_stats(&timer, 1);
 }
@@ -20,7 +25,7 @@ void test_timer_multiple_inferences() {
   printf("Running test_timer_multiple_inferences...\n");
   Timer timer;
   start_recording(&timer);
-  usleep(1200000); // 1.2 seconds
+  cp_sleep_ms(1200);  // Cross-platform sleep for 1.2 seconds
   stop_recording(&timer);
   print_human_readable_stats(&timer, 4);
 }
@@ -58,7 +63,7 @@ void test_logger_levels() {
 
 // Test logger file rotation by writing many log messages
 void test_logger_rotation() {
-  // TODO: this fails when number of messages is > 60k
+  // TODO(ayoubassis): this fails when number of messages is > 60k
   printf("Running test_logger_rotation...\n");
   Logger *logger = create_logger("test_log_rotate", LOG_DEBUG, LOG_ERROR);
   // Write enough messages to trigger rotation
@@ -75,7 +80,7 @@ void test_human_memory_size() {
   uint64_t test_values[] = {0,       512,        1024,
                             1048576, 1073741824, 1099511627776ULL};
   for (int i = 0; i < 6; ++i) {
-    printf("%llu bytes -> %s\n", (unsigned long long)test_values[i],
+    printf("%llu bytes -> %s\n", (uint64_t)test_values[i],
            human_memory_size(test_values[i]));
   }
 }

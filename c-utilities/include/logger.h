@@ -1,48 +1,45 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
 
+#ifndef C_UTILITIES_INCLUDE_LOGGER_H_
+#define C_UTILITIES_INCLUDE_LOGGER_H_
+
+#include <stdarg.h>  // For va_list, va_start, va_end
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <time.h>
-#include <string.h>
-#include <pthread.h>
+#include <stdlib.h>  // For malloc, free
+#include <string.h>  // For snprintf
+
+#include "cp_platform.h"  // NOLINT(build/include_subdir)
 
 // Maximum log file size (4MB)
-#define MAX_LOG_FILE_SIZE (4*1024*1024)
-#define log_debug(logger, format, ...) log_message(logger, LOG_DEBUG, format, ##__VA_ARGS__)
-#define log_info(logger, format, ...) log_message(logger, LOG_INFO, format, ##__VA_ARGS__)
-#define log_warning(logger, format, ...) log_message(logger, LOG_WARNING, format, ##__VA_ARGS__)
-#define log_error(logger, format, ...) log_message(logger, LOG_ERROR, format, ##__VA_ARGS__)
+#define MAX_LOG_FILE_SIZE (4 * 1024 * 1024)
+#define log_debug(logger, format, ...) \
+  log_message(logger, LOG_DEBUG, format, ##__VA_ARGS__)
+#define log_info(logger, format, ...) \
+  log_message(logger, LOG_INFO, format, ##__VA_ARGS__)
+#define log_warning(logger, format, ...) \
+  log_message(logger, LOG_WARNING, format, ##__VA_ARGS__)
+#define log_error(logger, format, ...) \
+  log_message(logger, LOG_ERROR, format, ##__VA_ARGS__)
 
 // Enum for log levels
-typedef enum {
-    LOG_DEBUG,
-    LOG_INFO,
-    LOG_WARNING,
-    LOG_ERROR
-} LogLevel;
+typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
 
 // Logger structure definition
 typedef struct Logger {
-    FILE *log_file;           // File pointer for the log file
-    char *filename;           // Base filename for log file
-    LogLevel file_level;      // Log level for file output
-    LogLevel console_level;   // Log level for console output
-    pthread_mutex_t lock;     // Mutex lock for thread safety
-    int file_index;           // File index for log rotation
+  FILE *log_file;
+  char *filename;
+  LogLevel file_level;
+  LogLevel console_level;
+  cp_mutex_t lock;  // Use cross-platform mutex
+  int file_index;
 } Logger;
 
-// Function to create a new logger
-Logger* create_logger(const char *filename, LogLevel file_level, LogLevel console_level);
-
-// Function to close the logger and free memory
+// Function declarations
+Logger *create_logger(const char *filename, LogLevel file_level,
+                      LogLevel console_level);
 void close_logger(Logger *logger);
-
-// Function to rotate the log file when the size limit is reached
 void rotate_log_file(Logger *logger);
-
-// Function to log a message at a specified log level
 void log_message(Logger *logger, LogLevel level, const char *format, ...);
 
-#endif // LOGGER_H
+#endif  // C_UTILITIES_INCLUDE_LOGGER_H_

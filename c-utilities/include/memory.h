@@ -1,7 +1,13 @@
-#ifndef MEMORY_H
-#define MEMORY_H
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
 
+#ifndef C_UTILITIES_INCLUDE_MEMORY_H_
+#define C_UTILITIES_INCLUDE_MEMORY_H_
+
+#include <math.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 /**
  * @brief Get a human-readable memory size from the byte count
@@ -16,4 +22,4 @@ const char *human_memory_size(uint64_t bytes);
  */
 void print_memory_usage(const char *name);
 
-#endif // MEMORY_H
+#endif  // C_UTILITIES_INCLUDE_MEMORY_H_
