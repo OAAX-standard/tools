@@ -1,0 +1,16 @@
+name: Run cpplint
+
+on:
+  push:
+
+jobs:
+  run-linter:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Compile unit tests
+        run: bash tests/build-and-run.sh

@@ -24,9 +24,16 @@ endif()
 
 add_executable(unit_tests
     main.c
+    test_timer.c
+    test_logger.c
+    test_memory.c
+    test_tensors_struct.c
+    test_queue.c
     ../c-utilities/src/logger.c
     ../c-utilities/src/memory.c
     ../c-utilities/src/timer.c
+    ../c-utilities/src/tensors_struct.c
+    ../c-utilities/src/queue.c
     ../c-utilities/src/cp_platform.c
 )
 

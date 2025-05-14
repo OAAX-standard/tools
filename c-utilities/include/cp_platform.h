@@ -12,11 +12,19 @@
 #ifdef _WIN32
 #include <windows.h>
 typedef HANDLE cp_mutex_t;
+
+// Condition variable for Windows
+typedef struct {
+  CONDITION_VARIABLE cond;
+} cp_cond_t;
 #else
 #include <malloc.h>
 #include <pthread.h>
 #include <sys/time.h>
 typedef pthread_mutex_t cp_mutex_t;
+
+// Condition variable for POSIX
+typedef pthread_cond_t cp_cond_t;
 #endif
 
 // Cross-platform mutex functions
@@ -24,6 +32,14 @@ void cp_mutex_init(cp_mutex_t *mutex);
 void cp_mutex_destroy(cp_mutex_t *mutex);
 void cp_mutex_lock(cp_mutex_t *mutex);
 void cp_mutex_unlock(cp_mutex_t *mutex);
+
+// Cross-platform condition variable functions
+void cp_cond_init(cp_cond_t *cond);
+void cp_cond_destroy(cp_cond_t *cond);
+int cp_cond_wait(cp_cond_t *cond, cp_mutex_t *mutex);
+int cp_cond_timedwait(cp_cond_t *cond, cp_mutex_t *mutex, int64_t timeout_ms);
+void cp_cond_signal(cp_cond_t *cond);
+void cp_cond_broadcast(cp_cond_t *cond);
 
 // Cross-platform strdup
 char *cp_strdup(const char *str);

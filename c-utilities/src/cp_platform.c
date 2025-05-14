@@ -52,6 +52,27 @@ void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
 
 void cp_sleep_ms(uint32_t milliseconds) { Sleep(milliseconds); }
 
+// Condition variable functions for Windows
+void cp_cond_init(cp_cond_t *cond) {
+  InitializeConditionVariable(&cond->cond);
+}
+void cp_cond_destroy(cp_cond_t *cond) {
+  // No-op for Windows CONDITION_VARIABLE
+  (void)cond;
+}
+void cp_cond_wait(cp_cond_t *cond, cp_mutex_t *mutex) {
+  SleepConditionVariableMutex(&cond->cond, *mutex, INFINITE);
+}
+int cp_cond_timedwait(cp_cond_t *cond, cp_mutex_t *mutex, int64_t timeout_ms) {
+  return SleepConditionVariableMutex(&cond->cond, *mutex, (DWORD)timeout_ms) ? 0 : 1;
+}
+void cp_cond_signal(cp_cond_t *cond) {
+  WakeConditionVariable(&cond->cond);
+}
+void cp_cond_broadcast(cp_cond_t *cond) {
+  WakeAllConditionVariable(&cond->cond);
+}
+
 #else
 
 void cp_sleep_ms(uint32_t milliseconds) {
@@ -83,10 +104,41 @@ int64_t cp_get_current_us() {
 
 void cp_get_memory_usage(uint64_t *total_allocated, uint64_t *total_free,
                          uint64_t *total_releasable) {
-  struct mallinfo mi = mallinfo();
+  struct mallinfo2 mi = mallinfo2();
   *total_allocated = mi.uordblks;
   *total_free = mi.fordblks;
   *total_releasable = mi.keepcost;
+}
+
+// Condition variable functions for POSIX
+void cp_cond_init(cp_cond_t *cond) {
+  pthread_cond_init(cond, NULL);
+}
+void cp_cond_destroy(cp_cond_t *cond) {
+  pthread_cond_destroy(cond);
+}
+int cp_cond_wait(cp_cond_t *cond, cp_mutex_t *mutex) {
+  return pthread_cond_wait(cond, mutex);
+}
+int cp_cond_timedwait(cp_cond_t *cond, cp_mutex_t *mutex, int64_t timeout_ms) {
+  if (timeout_ms <= 0) {
+    return pthread_cond_wait(cond, mutex);
+  }
+  struct timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  ts.tv_sec += timeout_ms / 1000;
+  ts.tv_nsec += (timeout_ms % 1000) * 1000000;
+  if (ts.tv_nsec >= 1000000000) {
+    ts.tv_sec += 1;
+    ts.tv_nsec -= 1000000000;
+  }
+  return pthread_cond_timedwait(cond, mutex, &ts);
+}
+void cp_cond_signal(cp_cond_t *cond) {
+  pthread_cond_signal(cond);
+}
+void cp_cond_broadcast(cp_cond_t *cond) {
+  pthread_cond_broadcast(cond);
 }
 
 #endif
