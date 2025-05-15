@@ -29,6 +29,7 @@ add_executable(c-utilities-tests
     test_memory.c
     test_tensors_struct.c
     test_queue.c
+    test_utils.c
     ../c-utilities/src/logger.c
     ../c-utilities/src/memory.c
     ../c-utilities/src/timer.c

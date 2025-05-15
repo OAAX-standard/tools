@@ -1,6 +1,7 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifndef _WIN32
 #include "utils.h"  // NOLINT(build/include_subdir)
 
 #include <sys/time.h>  // For struct timeval and gettimeofday
@@ -19,3 +20,5 @@ int64_t get_current_us() {
   int64_t total_microseconds = time.tv_sec * 1000000 + time.tv_usec;
   return total_microseconds;
 }
+
+#endif  // _WIN32
