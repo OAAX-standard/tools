@@ -27,4 +27,4 @@ cmake --build . --config Release
 
 # Run the unit tests binary
 # NOTE: Change the path to the unit tests binary if necessary
-./unit_tests
+./c-utilities-tests

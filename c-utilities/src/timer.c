@@ -1,15 +1,12 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
-#include "timer.h"  // NOLINT(build/include_subdir)
-
+#include <sys/time.h>
 #include <stdio.h>
 
-#include "cp_platform.h"  // NOLINT(build/include_subdir)
+#include "timer.h"  // NOLINT(build/include_subdir)
+#include "utils.h"  // NOLINT(build/include_subdir)
 
-static int64_t get_current_us() {
-  return cp_get_current_us();  // Use cross-platform function
-}
 
 void start_recording(Timer *timer) {
   timer->start = get_current_us();
@@ -23,7 +20,7 @@ void stop_recording(Timer *timer) {
 }
 
 void print_human_readable_stats(const Timer *timer,
-                                int64_t number_of_inferences) {
+  int64_t number_of_inferences) {
   if (timer->end == -1) {
     printf("Warning: Timer has not been stopped yet.\n");
     return;
@@ -38,12 +35,11 @@ void print_human_readable_stats(const Timer *timer,
   int64_t milliseconds = elapsed_time / 1000;
   elapsed_time -= milliseconds * 1000;
   int64_t microseconds = elapsed_time;
-
   printf(
       "\n\n----------------------------------------------------------------\n");
   printf("Benchmark results:\n");
-  printf("Elapsed time: %ldh %ldm %lds %ldms %ldus\n", hours, minutes,
-         seconds, milliseconds, microseconds);
+  printf("Elapsed time: %ldh %ldm %lds %ldms %ldus\n", hours, minutes, seconds,
+         milliseconds, microseconds);
   if (number_of_inferences > 0) {
     float avg_latency_ms =
         (float)timer->elapsed_time / number_of_inferences / 1000;

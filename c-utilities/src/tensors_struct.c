@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cp_platform.h"  // Add this for cp_strdup and platform compatibility
-
 int8_t get_data_type_byte_size(tensor_data_type type) {
   switch (type) {
     case DATA_TYPE_FLOAT:
@@ -260,8 +258,7 @@ tensors_struct* deep_copy_tensors_struct(const tensors_struct* src) {
   // Iterate through each tensor
   for (size_t i = 0; i < dst->num_tensors; ++i) {
     // Copy the name of the tensor
-    dst->names[i] =
-        cp_strdup(src->names[i]);  // Use cp_strdup for Windows compatibility
+    dst->names[i] = strdup(src->names[i]);
 
     // Copy the data type
     dst->data_types[i] = src->data_types[i];
@@ -367,8 +364,9 @@ bool compare_two_tensors_structs(const tensors_struct* tensors1,
       total_size *= tensors1->shapes[i][j];
     }
     if (memcmp(tensors1->data[i], tensors2->data[i], total_size) != 0) {
-      for (int k=0; k < total_size/data_size; ++k) {
-        printf("%f - %f\n", ((float*)tensors1->data[i])[k], ((float*)tensors2->data[i])[k]);
+      for (int k = 0; k < total_size / data_size; ++k) {
+        printf("%f - %f\n", ((float*)tensors1->data[i])[k],
+               ((float*)tensors2->data[i])[k]);
       }
       return false;  // Different data
     }
@@ -390,16 +388,16 @@ tensors_struct* create_sample_tensors_struct(int seed) {
   }
   t->num_tensors = 2;
   t->names = (char**)malloc(2 * sizeof(char*));
-  t->names[0] = cp_strdup("tensor1");
-  t->names[1] = cp_strdup("tensor2");
+  t->names[0] = strdup("tensor1");
+  t->names[1] = strdup("tensor2");
 
   t->data_types = (tensor_data_type*)malloc(2 * sizeof(tensor_data_type));
   t->data_types[0] = DATA_TYPE_FLOAT;
   t->data_types[1] = DATA_TYPE_INT32;
 
   t->ranks = (size_t*)malloc(2 * sizeof(size_t));
-  t->ranks[0] = 2 ;
-  t->ranks[1] = 1 ;
+  t->ranks[0] = 2;
+  t->ranks[1] = 1;
 
   t->shapes = (size_t**)malloc(2 * sizeof(size_t*));
   t->shapes[0] = (size_t*)malloc(2 * sizeof(size_t));
@@ -412,9 +410,10 @@ tensors_struct* create_sample_tensors_struct(int seed) {
   t->data[0] = malloc(t->shapes[0][0] * t->shapes[0][1] * sizeof(float));
   t->data[1] = malloc(t->shapes[1][0] * sizeof(int32_t));
   float* d0 = (float*)t->data[0];
-  for (int i = 0; i < t->shapes[0][0] * t->shapes[0][1]; ++i) d0[i] = (float)i * seed/10.34343f;
+  for (int i = 0; i < t->shapes[0][0] * t->shapes[0][1]; ++i)
+    d0[i] = (float)i * seed / 10.34343f;
   int32_t* d1 = (int32_t*)t->data[1];
-  for (int i = 0; i < t->shapes[1][0]; ++i) d1[i] = i * 10 + 5* seed;
+  for (int i = 0; i < t->shapes[1][0]; ++i) d1[i] = i * 10 + 5 * seed;
 
   return t;
 }

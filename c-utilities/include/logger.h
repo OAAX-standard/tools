@@ -4,12 +4,8 @@
 #ifndef C_UTILITIES_INCLUDE_LOGGER_H_
 #define C_UTILITIES_INCLUDE_LOGGER_H_
 
-#include <stdarg.h>  // For va_list, va_start, va_end
+#include <pthread.h>  // For pthread_mutex_t
 #include <stdio.h>
-#include <stdlib.h>  // For malloc, free
-#include <string.h>  // For snprintf
-
-#include "cp_platform.h"  // NOLINT(build/include_subdir)
 
 // Maximum log file size (4MB)
 #define MAX_LOG_FILE_SIZE (4 * 1024 * 1024)
@@ -23,23 +19,35 @@
   log_message(logger, LOG_ERROR, format, ##__VA_ARGS__)
 
 // Enum for log levels
-typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
+typedef enum {
+    LOG_DEBUG = 0,
+    LOG_INFO,
+    LOG_WARNING,
+    LOG_ERROR
+} LogLevel;
 
 // Logger structure definition
 typedef struct Logger {
-  FILE *log_file;
-  char *filename;
-  LogLevel file_level;
-  LogLevel console_level;
-  cp_mutex_t lock;  // Use cross-platform mutex
-  int file_index;
+    char *prefix;             // Prefix for log messages
+    FILE *log_file;           // File pointer for the log file
+    char *filename;           // Base filename for log file
+    LogLevel file_level;      // Log level for file output
+    LogLevel console_level;   // Log level for console output
+    pthread_mutex_t lock;     // Mutex lock for thread safety
+    int file_index;           // File index for log rotation
 } Logger;
 
-// Function declarations
-Logger *create_logger(const char *filename, LogLevel file_level,
-                      LogLevel console_level);
+// Function to create a new logger
+Logger *create_logger(const char *prefix, const char *filename,
+  LogLevel file_level, LogLevel console_level);
+
+// Function to close the logger and free memory
 void close_logger(Logger *logger);
+
+// Function to rotate the log file when the size limit is reached
 void rotate_log_file(Logger *logger);
+
+// Function to log a message at a specified log level
 void log_message(Logger *logger, LogLevel level, const char *format, ...);
 
 #endif  // C_UTILITIES_INCLUDE_LOGGER_H_

@@ -1,13 +1,16 @@
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
+
 #include <stdio.h>
-#include "cp_platform.h"
-#include "timer.h"
+#include "timer.h"  // NOLINT[build/include_subdir]
+#include "utils.h"  // NOLINT[build/include_subdir]
 
 // Test basic timer functionality: start, wait, stop, and print stats
 static void test_timer_basic() {
   printf("Running test_timer_basic...\n");
   Timer timer;
   start_recording(&timer);
-  cp_sleep_ms(500);
+  sleep_ms(500);
   stop_recording(&timer);
   print_human_readable_stats(&timer, 1);
 }
@@ -17,7 +20,7 @@ static void test_timer_multiple_inferences() {
   printf("Running test_timer_multiple_inferences...\n");
   Timer timer;
   start_recording(&timer);
-  cp_sleep_ms(1200);
+  sleep_ms(1200);
   stop_recording(&timer);
   print_human_readable_stats(&timer, 4);
 }

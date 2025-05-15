@@ -1,8 +1,11 @@
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "tensors_struct.h"
+#include "tensors_struct.h"  // NOLINT[build/include_subdir]
 
 
 void test_deep_and_shallow_copy_and_compare() {

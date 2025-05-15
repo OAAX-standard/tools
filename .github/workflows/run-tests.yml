@@ -1,4 +1,4 @@
-name: Run cpplint
+name: Run tests
 
 on:
   push:

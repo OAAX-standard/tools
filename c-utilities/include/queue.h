@@ -5,12 +5,11 @@
 #define C_UTILITIES_INCLUDE_QUEUE_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>    // for int64_t on Windows
 
-#include "cp_platform.h"      // Use cross-platform primitives
-#include "tensors_struct.h"   // NOLINT(build/include_subdir)
+#include "tensors_struct.h"  // NOLINT(build/include_subdir)
 
 typedef struct QueueItem {
   tensors_struct *tensors;  // The item in the queue
@@ -18,13 +17,13 @@ typedef struct QueueItem {
 } QueueItem;
 
 typedef struct {
-  int size;                // Current number of items in the queue
-  int capacity;            // Maximum number of items that the queue can hold
+  int32_t size;            // Current number of items in the queue
+  int32_t capacity;        // Maximum number of items that the queue can hold
   bool thread_safe;        // Whether the queue should be thread-safe
   bool shutdown;           // Indicates if the queue is shutting down
   QueueItem *head, *tail;  // Head and tail of the queue
-  cp_mutex_t mutex;        // Cross-platform mutex for thread-safety
-  cp_cond_t cond;          // Cross-platform condition variable for thread-safety
+  pthread_mutex_t mutex;   // Cross-platform mutex for thread-safety
+  pthread_cond_t cond;   // Cross-platform condition variable for thread-safety
 } Queue;
 
 /**
