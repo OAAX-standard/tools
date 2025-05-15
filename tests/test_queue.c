@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include <pthread.h>
 
 #include "queue.h"
 #include "tensors_struct.h"
@@ -139,12 +138,12 @@ static void test_queue_threaded() {
     arg.q = q;
     arg.count = 20;
 
-    pthread_t prod, cons;
-    pthread_create(&prod, NULL, producer_thread, &arg);
-    pthread_create(&cons, NULL, consumer_thread, &arg);
+    cp_thread_t prod, cons;
+    cp_thread_create(&prod, producer_thread, &arg);
+    cp_thread_create(&cons, consumer_thread, &arg);
 
-    pthread_join(prod, NULL);
-    pthread_join(cons, NULL);
+    cp_thread_join(prod);
+    cp_thread_join(cons);
 
     free_queue(q);
     printf("test_queue_threaded passed.\n");

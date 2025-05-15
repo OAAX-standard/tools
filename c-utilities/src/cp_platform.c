@@ -73,6 +73,17 @@ void cp_cond_broadcast(cp_cond_t *cond) {
   WakeAllConditionVariable(&cond->cond);
 }
 
+// Thread functions for Windows
+int cp_thread_create(cp_thread_t *thread, cp_thread_func_t func, void *arg) {
+  *thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)func, arg, 0, NULL);
+  return *thread ? 0 : -1;
+}
+int cp_thread_join(cp_thread_t thread) {
+  DWORD res = WaitForSingleObject(thread, INFINITE);
+  CloseHandle(thread);
+  return (res == WAIT_OBJECT_0) ? 0 : -1;
+}
+
 #else
 
 void cp_sleep_ms(uint32_t milliseconds) {
@@ -139,6 +150,14 @@ void cp_cond_signal(cp_cond_t *cond) {
 }
 void cp_cond_broadcast(cp_cond_t *cond) {
   pthread_cond_broadcast(cond);
+}
+
+// Thread functions for POSIX
+int cp_thread_create(cp_thread_t *thread, cp_thread_func_t func, void *arg) {
+  return pthread_create(thread, NULL, func, arg);
+}
+int cp_thread_join(cp_thread_t thread) {
+  return pthread_join(thread, NULL);
 }
 
 #endif

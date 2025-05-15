@@ -17,6 +17,10 @@ typedef HANDLE cp_mutex_t;
 typedef struct {
   CONDITION_VARIABLE cond;
 } cp_cond_t;
+
+// Thread types for Windows
+typedef HANDLE cp_thread_t;
+typedef DWORD (WINAPI *cp_thread_func_t)(LPVOID);
 #else
 #include <malloc.h>
 #include <pthread.h>
@@ -25,6 +29,10 @@ typedef pthread_mutex_t cp_mutex_t;
 
 // Condition variable for POSIX
 typedef pthread_cond_t cp_cond_t;
+
+// Thread types for POSIX
+typedef pthread_t cp_thread_t;
+typedef void *(*cp_thread_func_t)(void *);
 #endif
 
 // Cross-platform mutex functions
@@ -40,6 +48,10 @@ int cp_cond_wait(cp_cond_t *cond, cp_mutex_t *mutex);
 int cp_cond_timedwait(cp_cond_t *cond, cp_mutex_t *mutex, int64_t timeout_ms);
 void cp_cond_signal(cp_cond_t *cond);
 void cp_cond_broadcast(cp_cond_t *cond);
+
+// Cross-platform thread functions
+int cp_thread_create(cp_thread_t *thread, cp_thread_func_t func, void *arg);
+int cp_thread_join(cp_thread_t thread);
 
 // Cross-platform strdup
 char *cp_strdup(const char *str);
