@@ -21,7 +21,6 @@ typedef struct QueueItem {
 typedef struct {
   int32_t size;
   int32_t capacity;
-  bool thread_safe;
   bool shutdown;
   QueueItem *head, *tail;
   CRITICAL_SECTION mutex;      // Windows critical section for thread-safety
@@ -32,7 +31,6 @@ typedef struct {
 typedef struct {
   int32_t size;
   int32_t capacity;
-  bool thread_safe;
   bool shutdown;
   QueueItem *head, *tail;
   pthread_mutex_t mutex;       // POSIX mutex for thread-safety
@@ -48,7 +46,7 @@ typedef struct {
  *
  * @return A pointer to the newly created queue.
  */
-Queue *new_queue(int capacity, bool thread_safe);
+Queue *new_queue(int capacity);
 
 /**
  * @brief Enqueue a new item to the queue.
