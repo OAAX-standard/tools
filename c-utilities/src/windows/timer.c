@@ -1,14 +1,26 @@
+// Windows version of timer.c
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
-#ifndef _WIN32
-
-#include <sys/time.h>
+#ifdef _WIN32
 #include <stdio.h>
+#include <windows.h>
 
 #include "timer.h"  // NOLINT(build/include_subdir)
 #include "utils.h"  // NOLINT(build/include_subdir)
 
+// Helper function to get current time in microseconds
+static int64_t get_current_us() {
+  static LARGE_INTEGER frequency;
+  static int initialized = 0;
+  if (!initialized) {
+    QueryPerformanceFrequency(&frequency);
+    initialized = 1;
+  }
+  LARGE_INTEGER now;
+  QueryPerformanceCounter(&now);
+  return (int64_t)((now.QuadPart * 1000000) / frequency.QuadPart);
+}
 
 void start_recording(Timer *timer) {
   timer->start = get_current_us();
@@ -22,7 +34,7 @@ void stop_recording(Timer *timer) {
 }
 
 void print_human_readable_stats(const Timer *timer,
-  int64_t number_of_inferences) {
+                                int64_t number_of_inferences) {
   if (timer->end == -1) {
     printf("Warning: Timer has not been stopped yet.\n");
     return;
@@ -51,4 +63,5 @@ void print_human_readable_stats(const Timer *timer,
   printf(
       "----------------------------------------------------------------\n\n");
 }
+
 #endif  // _WIN32

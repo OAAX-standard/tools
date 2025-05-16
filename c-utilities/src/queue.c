@@ -1,6 +1,8 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifndef _WIN32
+
 #include "queue.h"  // NOLINT(build/include_subdir)
 
 #include <errno.h>
@@ -16,8 +18,6 @@ extern Logger *logger;
 // Get the timeout time in milliseconds
 static struct timespec get_timeout_time(int timeout_ms);
 
-static int max_queue;
-
 Queue *new_queue(int capacity, bool thread_safe) {
   log_debug(logger, "Creating new queue with capacity %d and thread safety %s",
             capacity, thread_safe ? "enabled" : "disabled");
@@ -32,8 +32,6 @@ Queue *new_queue(int capacity, bool thread_safe) {
   queue->shutdown = false;
   queue->head = NULL;
   queue->tail = NULL;
-
-  max_queue = 0;
 
   int ret;
 
@@ -113,8 +111,6 @@ int enqueue(Queue *queue, tensors_struct *tensors) {
   }
 
   queue->size++;
-
-  if (max_queue < queue->size) max_queue = queue->size;
 
   ret = pthread_cond_signal(&queue->cond);
   if (ret != 0) {
@@ -252,3 +248,5 @@ static struct timespec get_timeout_time(int timeout_ms) {
   }
   return ts;
 }
+
+#endif  // _WIN32

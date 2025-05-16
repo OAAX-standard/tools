@@ -1,6 +1,8 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifndef _WIN32
+
 #include "memory.h"  // NOLINT(build/include_subdir)
 
 #include <malloc.h>
@@ -39,3 +41,5 @@ void print_memory_usage(const char *name) {
   printf(
       "-----------------------------------------------------------------\n\n");
 }
+
+#endif  // _WIN32

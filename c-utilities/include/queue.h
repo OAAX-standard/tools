@@ -16,15 +16,29 @@ typedef struct QueueItem {
   struct QueueItem *next;   // Pointer to the next item in the queue
 } QueueItem;
 
+#ifdef _WIN32
+#include <windows.h>
 typedef struct {
-  int32_t size;            // Current number of items in the queue
-  int32_t capacity;        // Maximum number of items that the queue can hold
-  bool thread_safe;        // Whether the queue should be thread-safe
-  bool shutdown;           // Indicates if the queue is shutting down
-  QueueItem *head, *tail;  // Head and tail of the queue
-  pthread_mutex_t mutex;   // Cross-platform mutex for thread-safety
-  pthread_cond_t cond;   // Cross-platform condition variable for thread-safety
+  int32_t size;
+  int32_t capacity;
+  bool thread_safe;
+  bool shutdown;
+  QueueItem *head, *tail;
+  CRITICAL_SECTION mutex;      // Windows critical section for thread-safety
+  CONDITION_VARIABLE cond;     // Windows condition variable for thread-safety
 } Queue;
+#else
+#include <pthread.h>
+typedef struct {
+  int32_t size;
+  int32_t capacity;
+  bool thread_safe;
+  bool shutdown;
+  QueueItem *head, *tail;
+  pthread_mutex_t mutex;       // POSIX mutex for thread-safety
+  pthread_cond_t cond;         // POSIX condition variable for thread-safety
+} Queue;
+#endif
 
 /**
  * @brief Create a new queue.
