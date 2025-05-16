@@ -6,13 +6,13 @@
 
 #include "queue.h"  // NOLINT(build/include_subdir)
 
-#include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
-#include "logger.h"  // NOLINT(build/include_subdir)
+#include "logger.h"          // NOLINT(build/include_subdir)
 #include "tensors_struct.h"  // NOLINT(build/include_subdir)
 
 extern Logger *logger;
@@ -36,16 +36,14 @@ static DWORD remaining_timeout(TimeoutHelper *helper) {
   return helper->timeout_ms - elapsed;
 }
 
-Queue *new_queue(int capacity, bool thread_safe) {
-  log_debug(logger, "Creating new queue with capacity %d and thread safety %s",
-    capacity, thread_safe ? "enabled" : "disabled");
+Queue *new_queue(int capacity) {
+  log_debug(logger, "Creating new queue with capacity %d", capacity);
   Queue *queue = (Queue *)malloc(sizeof(Queue));
   if (queue == NULL) {
     return NULL;
   }
   queue->size = 0;
   queue->capacity = capacity;
-  queue->thread_safe = thread_safe;
   queue->shutdown = false;
   queue->head = NULL;
   queue->tail = NULL;

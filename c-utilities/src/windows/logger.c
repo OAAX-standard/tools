@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <stdint.h>
 
 Logger *create_logger(const char *prefix, const char *filename,
                       LogLevel file_level, LogLevel console_level) {
@@ -28,13 +29,15 @@ Logger *create_logger(const char *prefix, const char *filename,
   char log_filename[1024];
   snprintf(log_filename, sizeof(log_filename), "%s.%d", logger->filename,
            logger->file_index);
-  logger->log_file = fopen(log_filename, "a");
-  if (logger->log_file == NULL) {
+  FILE *log_file = NULL;
+  if (fopen_s(&log_file, log_filename, "a") != 0) {
     perror("Failed to open log file");
     free(logger->filename);
+    free(logger->prefix);
     free(logger);
     exit(EXIT_FAILURE);
   }
+  logger->log_file = log_file;
 
   return logger;
 }
@@ -55,11 +58,12 @@ void rotate_log_file(Logger *logger) {
   char log_filename[256];
   snprintf(log_filename, sizeof(log_filename), "%s_%d.log", logger->filename,
            logger->file_index);
-  logger->log_file = fopen(log_filename, "a");
-  if (logger->log_file == NULL) {
+  FILE *log_file = NULL;
+  if (fopen_s(&log_file, log_filename, "a") != 0) {
     perror("Failed to open new log file");
     exit(EXIT_FAILURE);
   }
+  logger->log_file = log_file;
 }
 
 void log_message(Logger *logger, LogLevel level, const char *format, ...) {

@@ -49,7 +49,7 @@ void test_deep_and_shallow_copy_and_compare() {
 void test_tensors_struct_print_metadata() {
     tensors_struct* t = create_sample_tensors_struct(3);
     print_tensors_metadata(t);
-    // deep_free_tensors_struct(t);
+    deep_free_tensors_struct(t);
 }
 
 int test_tensors_struct_main() {

@@ -6,11 +6,11 @@
 #include "memory.h"  // NOLINT(build/include_subdir)
 
 #include <math.h>
+#include <windows.h>
 #include <psapi.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <windows.h>
 
 const char *human_memory_size(uint64_t bytes) {
   static char result[20];
@@ -23,7 +23,7 @@ const char *human_memory_size(uint64_t bytes) {
 
   int64_t i = (int64_t)floor(log((double)bytes) / log(1024.0));
   if (i >= 4) i = 4;
-  double humanSize = bytes / pow(1024.0, i);
+  double humanSize = bytes / pow(1024.0, (double) i);
   snprintf(result, sizeof(result), "%.2f %s", humanSize, sizeNames[i]);
 
   return result;

@@ -52,7 +52,7 @@ void print_human_readable_stats(const Timer *timer,
   printf(
       "\n\n----------------------------------------------------------------\n");
   printf("Benchmark results:\n");
-  printf("Elapsed time: %ldh %ldm %lds %ldms %ldus\n", hours, minutes, seconds,
+  printf("Elapsed time: %lldh %lldm %llds %lldms %lldus\n", hours, minutes, seconds,
          milliseconds, microseconds);
   if (number_of_inferences > 0) {
     float avg_latency_ms =

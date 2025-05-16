@@ -23,8 +23,8 @@ cd $BUILD_DIR
 cmake .. -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE
 
 # Build the project
-cmake --build . --config Release
+cmake --build . --config Debug
 
 # Run the unit tests binary
 # NOTE: Change the path to the unit tests binary if necessary
-./c-utilities-tests
+./c_utilities_tests

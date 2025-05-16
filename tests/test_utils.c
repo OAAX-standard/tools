@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "utils.h"  // NOLINT[build/include_subdir]
 
@@ -17,9 +18,9 @@ static void test_get_current_us() {
   int64_t start_time = get_current_us();
   sleep_ms(500);
   int64_t end_time = get_current_us();
-  printf("Start time: %ld us\n", start_time);
-  printf("End time: %ld us\n", end_time);
-  printf("Elapsed time: %ld us\n", end_time - start_time);
+  printf("Start time: %"PRId64" us\n", start_time);
+  printf("End time: %"PRId64" us\n", end_time);
+  printf("Elapsed time: %"PRId64" us\n", end_time - start_time);
 }
 
 void test_utils_main() {
