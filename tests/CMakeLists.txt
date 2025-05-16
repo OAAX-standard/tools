@@ -30,6 +30,7 @@ add_executable(c_utilities_tests
     test_tensors_struct.c
     test_queue.c
     test_utils.c
+    test_threading.c
 )
 
 target_link_libraries(c_utilities_tests ${PLATFORM_LIBS})

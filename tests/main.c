@@ -5,7 +5,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include "logger.h"  // NOLINT[build/include_subdir]
+#include "logger.h"     // NOLINT[build/include_subdir]
+#include "threading.h"  // Include your threading interface
 
 // Declare test entry points from new files
 void test_timer_main();
@@ -14,6 +15,7 @@ void test_memory_main();
 void test_tensors_struct_main();
 void test_queue_main();
 void test_utils_main();
+void test_threading_main();
 
 Logger *logger;
 
@@ -26,6 +28,7 @@ int main() {
   test_tensors_struct_main();
   test_queue_main();
   test_utils_main();
+  test_threading_main();  // Add threading test
 
   // Close the logger at the end of the tests
   close_logger(logger);
