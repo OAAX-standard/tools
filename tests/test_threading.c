@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 
 #include <stdio.h>
+#include <assert.h>
 
 #include "threading.h"  // NOLINT[build/include_subdir]
 
@@ -30,7 +31,8 @@ void test_basic_threading() {
   ThreadArg arg = {42};
   if (thread_create(&handle, sample_thread_func, &arg) == 0) {
     thread_join(&handle);
-    printf("[Test] Thread finished. Value is now: %d\n", arg.value);
+    // Check if the thread modified the value
+    assert(arg.value == 43);
   } else {
     printf("[Test] Failed to create thread!\n");
   }
@@ -47,10 +49,12 @@ void test_multiple_threads() {
       printf("[Test] Failed to create thread %d!\n", i);
     }
   }
-
+  // Ground-truth values
+  int expected_values[] = {1783293664, 1783293665, 1783293666, 1783293667,
+                           1783293668};
   for (int i = 0; i < 5; ++i) {
     thread_join(&handles[i]);
-    printf("[Test] Thread %d finished. Value is now: %d\n", i, args[i].value);
+    assert(args[i].value == expected_values[i]);
   }
   printf("[Test] All threads finished.\n");
 }
