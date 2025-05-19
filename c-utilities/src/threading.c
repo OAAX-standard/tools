@@ -3,7 +3,7 @@
 
 #ifndef _WIN32
 
-#include "threading.h"
+#include "threading.h"  // NOLINT[build/include_subdir]
 
 #include <stdlib.h>
 

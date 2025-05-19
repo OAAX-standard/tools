@@ -11,7 +11,7 @@ void sleep_ms(int64_t ms) {
   if (ms < 0) {
     return;
   }
-  Sleep((DWORD)ms);  // Sleep takes milliseconds (minimum), actual sleep may be longer
+  Sleep((DWORD)ms);  // actual sleep may be longer
 }
 
 int64_t get_current_us() {

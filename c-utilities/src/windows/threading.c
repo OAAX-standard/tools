@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 
 #ifdef _WIN32
-#include "threading.h"
+#include "threading.h"  // NOLINT[build/include_subdir]
 #include <process.h>
 
 int thread_create(ThreadHandle *handle, ThreadFunc func, void *arg) {

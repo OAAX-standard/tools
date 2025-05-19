@@ -6,7 +6,7 @@
 #include <windows.h>
 #endif
 #include "logger.h"     // NOLINT[build/include_subdir]
-#include "threading.h"  // Include your threading interface
+#include "threading.h"  // NOLINT[build/include_subdir]
 
 // Declare test entry points from new files
 void test_timer_main();
