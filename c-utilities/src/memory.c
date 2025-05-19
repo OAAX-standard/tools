@@ -30,7 +30,7 @@ const char *human_memory_size(uint64_t bytes) {
 }
 
 void print_memory_usage(const char *name) {
-  struct mallinfo2 mi = mallinfo2();
+  struct mallinfo mi = mallinfo();
 
   printf(
       "\n\n----------------------------------------------------------------\n");

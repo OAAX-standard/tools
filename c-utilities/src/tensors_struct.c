@@ -47,8 +47,8 @@ void print_tensors_metadata(const tensors_struct* tensors) {
   // Print number of tensors
   printf("Number of tensors: %zu\n", tensors->num_tensors);
   // Iterate through each tensor
-  for (int i = 0; i < tensors->num_tensors; ++i) {
-    printf("Tensor id=%d:\n", i);
+  for (size_t i = 0; i < tensors->num_tensors; ++i) {
+    printf("Tensor id=%zu:\n", i);
     printf("  Name: '%s'\n", tensors->names[i]);
     printf("  Data type: %d\n", tensors->data_types[i]);
     printf("  Rank: %zu\n", tensors->ranks[i]);
@@ -336,26 +336,26 @@ bool compare_two_tensors_structs(const tensors_struct* tensors1,
     return false;  // Different number of tensors
   }
   // Iterate through each tensor
-  for (int i = 0; i < tensors1->num_tensors; ++i) {
+  for (size_t i = 0; i < tensors1->num_tensors; ++i) {
     // Check if names are equal
     if (strcmp(tensors1->names[i], tensors2->names[i]) != 0) {
-      printf("Warning: Tensor names at %d are different\n", i);
+      printf("Warning: Tensor names at %zu are different\n", i);
       return false;  // Different names
     }
     // Check if data types are equal
     if (tensors1->data_types[i] != tensors2->data_types[i]) {
-      printf("Warning: Tensor data types at %d are different\n", i);
+      printf("Warning: Tensor data types at %zu are different\n", i);
       return false;  // Different data types
     }
     // Check if ranks are equal
     if (tensors1->ranks[i] != tensors2->ranks[i]) {
-      printf("Warning: Tensor ranks at %d are different\n", i);
+      printf("Warning: Tensor ranks at %zu are different\n", i);
       return false;  // Different ranks
     }
     // Check if shapes are equal
     for (size_t j = 0; j < tensors1->ranks[i]; ++j) {
       if (tensors1->shapes[i][j] != tensors2->shapes[i][j]) {
-        printf("Warning: Tensor shapes at %d are different\n", i);
+        printf("Warning: Tensor shapes at %zu are different\n", i);
         return false;  // Different shapes
       }
     }
@@ -408,10 +408,10 @@ tensors_struct* create_sample_tensors_struct(int seed) {
   t->data[0] = malloc(t->shapes[0][0] * t->shapes[0][1] * sizeof(float));
   t->data[1] = malloc(t->shapes[1][0] * sizeof(int32_t));
   float* d0 = (float*)t->data[0];
-  for (int i = 0; i < t->shapes[0][0] * t->shapes[0][1]; ++i)
+  for (size_t i = 0; i < t->shapes[0][0] * t->shapes[0][1]; ++i)
     d0[i] = (float)i * seed / 10.34343f;
   int32_t* d1 = (int32_t*)t->data[1];
-  for (int i = 0; i < t->shapes[1][0]; ++i) d1[i] = i * 10 + 5 * seed;
+  for (size_t i = 0; i < t->shapes[1][0]; ++i) d1[i] = i * 10 + 5 * seed;
 
   return t;
 }

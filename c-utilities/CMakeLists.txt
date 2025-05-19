@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-project(c_utilities C)
 
 # Set the source and header directories
 set(C_UTILITIES_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
@@ -19,6 +18,7 @@ endif()
 
 # Create the library
 add_library(c_utilities STATIC ${C_UTILITIES_SRC})
+set_target_properties(c_utilities PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Include directories
 target_include_directories(c_utilities PUBLIC ${C_UTILITIES_INCLUDE_DIR})
