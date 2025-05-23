@@ -11,18 +11,13 @@ void test_lib_loader() {
   const char *libname =
       "./mini_shared_library/libmini.so";  // Adjust this path as needed
   void *handle = load_dynamic_library(libname);
-  if (!handle) {
-    fprintf(stderr, "Failed to load library: %s\n", libname);
-    return;
-  }
+  assert(handle != NULL);
+
   // Retrieve the mini_add function
   int (*mini_add)(int, int) =
       (int (*)(int, int))get_symbol_address(handle, "mini_add");
-  if (!mini_add) {
-    fprintf(stderr, "Failed to find symbol mini_add\n");
-    close_dynamic_library(handle);
-    return;
-  }
+  assert(mini_add != NULL);
+  
   // Call the mini_add function
   int result = mini_add(201, -39);
   printf("mini_add(201, -39) = %d\n", result);
