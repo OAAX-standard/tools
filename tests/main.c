@@ -22,7 +22,7 @@ Logger *logger;
 
 int main() {
   logger = create_logger("C Utilities", "test.log", LOG_DEBUG, LOG_DEBUG);
-
+  printf("Running tests...\n");
   test_logger_main();
   test_timer_main();
   test_memory_main();
@@ -31,7 +31,7 @@ int main() {
   test_utils_main();
   test_threading_main();
   test_lib_loader_main();
-
+  printf("All tests passed.\n");
   // Close the logger at the end of the tests
   close_logger(logger);
   return 0;

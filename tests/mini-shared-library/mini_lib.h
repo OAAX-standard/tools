@@ -1,5 +1,8 @@
-#ifndef MINI_LIB_H
-#define MINI_LIB_H
+// Copyright (c) OAAX. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
+
+#ifndef TESTS_MINI_SHARED_LIBRARY_MINI_LIB_H_
+#define TESTS_MINI_SHARED_LIBRARY_MINI_LIB_H_
 
 #ifdef _WIN32
   #define MINI_API __declspec(dllexport)
@@ -17,4 +20,4 @@ MINI_API int mini_add(int a, int b);
 }
 #endif
 
-#endif // MINI_LIB_H
+#endif  // TESTS_MINI_SHARED_LIBRARY_MINI_LIB_H_
