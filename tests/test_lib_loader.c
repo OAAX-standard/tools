@@ -8,8 +8,13 @@
 
 // Test basic dynamic library loading and symbol retrieval
 void test_lib_loader() {
+#ifdef _WIN32
+  const char *libname =
+      ".\\mini_shared_library\\Debug\\mini.dll";  // Adjust this path as needed
+#else
   const char *libname =
       "./mini_shared_library/libmini.so";  // Adjust this path as needed
+#endif
   void *handle = load_dynamic_library(libname);
   assert(handle != NULL);
 
@@ -17,7 +22,7 @@ void test_lib_loader() {
   int (*mini_add)(int, int) =
       (int (*)(int, int))get_symbol_address(handle, "mini_add");
   assert(mini_add != NULL);
-  
+
   // Call the mini_add function
   int result = mini_add(201, -39);
   printf("mini_add(201, -39) = %d\n", result);
