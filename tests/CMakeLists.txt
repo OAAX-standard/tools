@@ -31,12 +31,20 @@ add_executable(c_utilities_tests
     test_queue.c
     test_utils.c
     test_threading.c
+    test_lib_loader.c
 )
 
 target_link_libraries(c_utilities_tests ${PLATFORM_LIBS})
-# Specify binary dir for out-of-tree subdirectory
+
+# Link C Utilities project
 add_subdirectory(
     ../c-utilities
     ${CMAKE_CURRENT_BINARY_DIR}/c_utilities
 )
 target_link_libraries(c_utilities_tests c_utilities)
+
+# Link mini shared library project
+add_subdirectory(
+    ./mini-shared-library
+    ${CMAKE_CURRENT_BINARY_DIR}/mini_shared_library
+)

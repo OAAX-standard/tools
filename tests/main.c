@@ -16,6 +16,7 @@ void test_tensors_struct_main();
 void test_queue_main();
 void test_utils_main();
 void test_threading_main();
+void test_lib_loader_main();
 
 Logger *logger;
 
@@ -28,7 +29,8 @@ int main() {
   test_tensors_struct_main();
   test_queue_main();
   test_utils_main();
-  test_threading_main();  // Add threading test
+  test_threading_main();
+  test_lib_loader_main();
 
   // Close the logger at the end of the tests
   close_logger(logger);
