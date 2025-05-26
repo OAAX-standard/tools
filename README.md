@@ -2,6 +2,9 @@
 
 This repository is meant to provide utility functions that are helpful for developing, testing and using OAAX runtimes and toolchains.
 
+[![Run tests](https://github.com/OAAX-standard/tools/actions/workflows/run-tests.yml/badge.svg)](https://github.com/OAAX-standard/tools/actions/workflows/run-tests.yml)
+[![Run cpplint](https://github.com/OAAX-standard/tools/actions/workflows/run-linter.yml/badge.svg)](https://github.com/OAAX-standard/tools/actions/workflows/run-linter.yml)
+
 ## Overview
 
 The C utilities folder contains three modules:
