@@ -44,7 +44,7 @@ static void get_cpu_name(char *buf, size_t size) {
 }
 
 static int get_cpu_cores() {
-  long n = sysconf(_SC_NPROCESSORS_ONLN);
+  int64_t n = sysconf(_SC_NPROCESSORS_ONLN);
   return (int)(n > 0 ? n : 1);
 }
 
@@ -176,27 +176,25 @@ static int is_virtual_machine() {
 static double calculate_cpu_usage() {
   // Read /proc/stat twice, 100ms apart
   FILE *f;
-  unsigned long long user1, nice1, system1, idle1, iowait1, irq1, softirq1,
-      steal1;
-  unsigned long long user2, nice2, system2, idle2, iowait2, irq2, softirq2,
-      steal2;
+  int64_t user1, nice1, system1, idle1, iowait1, irq1, softirq1, steal1;
+  int64_t user2, nice2, system2, idle2, iowait2, irq2, softirq2, steal2;
   f = fopen("/proc/stat", "r");
   if (!f) return 0.0;
-  fscanf(f, "cpu  %llu %llu %llu %llu %llu %llu %llu %llu", &user1, &nice1,
+  fscanf(f, "cpu  %lu %lu %lu %lu %lu %lu %lu %lu", &user1, &nice1,
          &system1, &idle1, &iowait1, &irq1, &softirq1, &steal1);
   fclose(f);
   usleep(100000);
   f = fopen("/proc/stat", "r");
   if (!f) return 0.0;
-  fscanf(f, "cpu  %llu %llu %llu %llu %llu %llu %llu %llu", &user2, &nice2,
+  fscanf(f, "cpu  %lu %lu %lu %lu %lu %lu %lu %lu", &user2, &nice2,
          &system2, &idle2, &iowait2, &irq2, &softirq2, &steal2);
   fclose(f);
-  unsigned long long idle_diff = (idle2 + iowait2) - (idle1 + iowait1);
-  unsigned long long total1 =
+  int64_t idle_diff = (idle2 + iowait2) - (idle1 + iowait1);
+  int64_t total1 =
       user1 + nice1 + system1 + idle1 + iowait1 + irq1 + softirq1 + steal1;
-  unsigned long long total2 =
+  int64_t total2 =
       user2 + nice2 + system2 + idle2 + iowait2 + irq2 + softirq2 + steal2;
-  unsigned long long total_diff = total2 - total1;
+  int64_t total_diff = total2 - total1;
   if (total_diff == 0) return 0.0;
   return 100.0 * (1.0 - ((double)idle_diff / total_diff));
 }
