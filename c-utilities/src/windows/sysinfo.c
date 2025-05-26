@@ -73,29 +73,26 @@ static int get_cpu_clock_mhz() {
 }
 
 static void detect_instruction_sets(char *buf, size_t size) {
-  static void detect_instruction_sets(char *buf, size_t size) {
 #if defined(_M_ARM64) || defined(_M_ARM)
-    // ARM/ARM64 SIMD support (simplified)
-    int has_neon =
-        IsProcessorFeaturePresent(PF_ARM_NEON_INSTRUCTIONS_AVAILABLE);
-    int has_v8 = IsProcessorFeaturePresent(PF_ARM_V8_INSTRUCTIONS_AVAILABLE);
-    snprintf(buf, size, "NEON:%s ARMv8:%s", has_neon ? "Yes" : "No",
-             has_v8 ? "Yes" : "No");
+  // ARM/ARM64 SIMD support (simplified)
+  int has_neon = IsProcessorFeaturePresent(PF_ARM_NEON_INSTRUCTIONS_AVAILABLE);
+  int has_v8 = IsProcessorFeaturePresent(PF_ARM_V8_INSTRUCTIONS_AVAILABLE);
+  snprintf(buf, size, "NEON:%s ARMv8:%s", has_neon ? "Yes" : "No",
+           has_v8 ? "Yes" : "No");
 #elif defined(_M_IX86) || defined(_M_X64)
-    // x86/x64 features (basic detection via processor feature API)
-    int has_sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
-    int has_sse2 = IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
-    int has_sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-    int has_avx = IsProcessorFeaturePresent(PF_AVX_INSTRUCTIONS_AVAILABLE);
-    int has_avx2 = IsProcessorFeaturePresent(PF_AVX2_INSTRUCTIONS_AVAILABLE);
-    snprintf(buf, size, "SSE:%s SSE2:%s SSE3:%s AVX:%s AVX2:%s",
-             has_sse ? "Yes" : "No", has_sse2 ? "Yes" : "No",
-             has_sse3 ? "Yes" : "No", has_avx ? "Yes" : "No",
-             has_avx2 ? "Yes" : "No");
+  // x86/x64 features (basic detection via processor feature API)
+  int has_sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  int has_sse2 = IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  int has_sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+  int has_avx = IsProcessorFeaturePresent(PF_AVX_INSTRUCTIONS_AVAILABLE);
+  int has_avx2 = IsProcessorFeaturePresent(PF_AVX2_INSTRUCTIONS_AVAILABLE);
+  snprintf(buf, size, "SSE:%s SSE2:%s SSE3:%s AVX:%s AVX2:%s",
+           has_sse ? "Yes" : "No", has_sse2 ? "Yes" : "No",
+           has_sse3 ? "Yes" : "No", has_avx ? "Yes" : "No",
+           has_avx2 ? "Yes" : "No");
 #else
-    snprintf(buf, size, "Instruction set detection not supported");
+  snprintf(buf, size, "Instruction set detection not supported");
 #endif
-  }
 }
 
 static int is_hyperthreading_supported() {
