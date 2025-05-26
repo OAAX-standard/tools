@@ -32,6 +32,7 @@ add_executable(c_utilities_tests
     test_utils.c
     test_threading.c
     test_lib_loader.c
+    test_sysinfo.c
 )
 
 target_link_libraries(c_utilities_tests ${PLATFORM_LIBS})
