@@ -73,13 +73,25 @@ static int get_cpu_clock_mhz() {
 }
 
 static void detect_instruction_sets(char *buf, size_t size) {
-  int info[4];
+#if defined(_M_IX86) || defined(_M_X64)
+  int info[5];
   __cpuid(info, 1);
-  snprintf(buf, size, "SSE:%s SSE2:%s SSE3:%s AVX:%s",
-           (info[3] & (1 << 25)) ? "Yes" : "No",
-           (info[3] & (1 << 26)) ? "Yes" : "No",
-           (info[2] & (1 << 0)) ? "Yes" : "No",
-           (info[2] & (1 << 28)) ? "Yes" : "No");
+  snprintf(
+      buf, size,
+      "SSE:%s SSE2:%s SSE3:%s AVX:%s AVX2:%s "
+      "AVX512F:%s FMA:%s BMI1:%s BMI2:%s",
+      (info[3] & (1 << 25)) ? "Yes" : "No",
+      (info[3] & (1 << 26)) ? "Yes" : "No", (info[2] & (1 << 0)) ? "Yes" : "No",
+      (info[2] & (1 << 28)) ? "Yes" : "No", (info[5] & (1 << 5)) ? "Yes" : "No",
+      (info[5] & (1 << 16)) ? "Yes" : "No",
+      (info[2] & (1 << 12)) ? "Yes" : "No", (info[2] & (1 << 3)) ? "Yes" : "No",
+      (info[2] & (1 << 8)) ? "Yes" : "No");
+#else
+  int has_neon = IsProcessorFeaturePresent(PF_ARM_NEON_INSTRUCTIONS_AVAILABLE);
+  int has_v8 = IsProcessorFeaturePresent(PF_ARM_V8_INSTRUCTIONS_AVAILABLE);
+  snprintf(buf, size, "NEON:%s ARMv8:%s", has_neon ? "Yes" : "No",
+           has_v8 ? "Yes" : "No");
+#endif
 }
 
 static int is_hyperthreading_supported() {
@@ -131,11 +143,42 @@ static void get_architecture(char *buf, size_t size) {
   }
 }
 
+#include <windows.h>
+#include <stdio.h>
+#include <string.h>
+
 static int is_virtual_machine() {
-  int cpuInfo[4] = {-1};
-  __cpuid(cpuInfo, 1);
-  return (cpuInfo[2] & (1 << 31)) != 0;
+    HKEY hKey;
+    const char* keyPath = "HARDWARE\\DESCRIPTION\\System\\BIOS";
+    char systemManufacturer[128] = {0};
+    DWORD size = sizeof(systemManufacturer);
+
+    if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyPath, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+        return 0;
+
+    if (RegQueryValueExA(hKey, "SystemManufacturer", NULL, NULL, (LPBYTE)systemManufacturer, &size) != ERROR_SUCCESS) {
+        RegCloseKey(hKey);
+        return 0;
+    }
+
+    RegCloseKey(hKey);
+
+    // Convert to lowercase for case-insensitive match
+    for (char *p = systemManufacturer; *p; ++p) *p = (char)tolower(*p);
+
+    // Common VM manufacturer strings
+    const char* vm_names[] = {
+        "vmware", "virtualbox", "qemu", "kvm", "xen", "microsoft", "parallels", "bhyve"
+    };
+
+    for (size_t i = 0; i < sizeof(vm_names) / sizeof(vm_names[0]); ++i) {
+        if (strstr(systemManufacturer, vm_names[i]) != NULL)
+            return 1;
+    }
+
+    return 0;
 }
+
 
 static float calculate_cpu_usage() {
   FILETIME idleTime1, kernelTime1, userTime1;
