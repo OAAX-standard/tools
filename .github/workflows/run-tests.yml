@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  run-tests:
+  run-tests-on-ubuntu-22-04:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -14,3 +14,16 @@ jobs:
 
       - name: Compile unit tests
         run: bash tests/build-and-run.sh
+
+  run-tests-on-windows-x64:
+    runs-on: windows-x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Compile unit tests
+        run: |
+          cd tests
+          .\build-and-run.bat
