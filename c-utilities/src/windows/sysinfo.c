@@ -17,18 +17,21 @@
 #include <windows.h>
 
 static void get_cpu_name(char *buf, size_t size) {
-  int cpuInfo[4] = {-1};
-  char name[0x40] = {0};
-  __cpuid(cpuInfo, 0x80000000);
-  unsigned int nExIds = cpuInfo[0];
-  if (nExIds >= 0x80000004) {
-    __cpuid((int *)(name + 0), 0x80000002);
-    __cpuid((int *)(name + 16), 0x80000003);
-    __cpuid((int *)(name + 32), 0x80000004);
-    strncpy_s(buf, size, name, _TRUNCATE);
-    return;
+  HKEY hKey;
+  const char *keyPath = "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0";
+  const char *valueName = "ProcessorNameString";
+  DWORD dataSize = (DWORD)size;
+
+  if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyPath, 0, KEY_READ, &hKey) ==
+      ERROR_SUCCESS) {
+    if (RegQueryValueExA(hKey, valueName, NULL, NULL, (LPBYTE)buf, &dataSize) !=
+        ERROR_SUCCESS) {
+      strncpy_s(buf, size, "Unknown", _TRUNCATE);
+    }
+    RegCloseKey(hKey);
+  } else {
+    strncpy_s(buf, size, "Unknown", _TRUNCATE);
   }
-  strncpy_s(buf, size, "Unknown", _TRUNCATE);
 }
 
 static int get_cpu_cores() {
