@@ -11,17 +11,6 @@
 #include "utils.h"  // NOLINT(build/include_subdir)
 
 // Helper function to get current time in microseconds
-static int64_t get_current_us() {
-  static LARGE_INTEGER frequency;
-  static int initialized = 0;
-  if (!initialized) {
-    QueryPerformanceFrequency(&frequency);
-    initialized = 1;
-  }
-  LARGE_INTEGER now;
-  QueryPerformanceCounter(&now);
-  return (int64_t)((now.QuadPart * 1000000) / frequency.QuadPart);
-}
 
 void start_recording(Timer *timer) {
   timer->start = get_current_us();
