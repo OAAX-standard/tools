@@ -147,10 +147,6 @@ static void get_architecture(char *buf, size_t size) {
   }
 }
 
-#include <stdio.h>
-#include <string.h>
-#include <windows.h>
-
 static int is_virtual_machine() {
   HKEY hKey;
   const char *keyPath = "HARDWARE\\DESCRIPTION\\System\\BIOS";
