@@ -1,0 +1,21 @@
+name: Run cpplint
+
+on:
+  push:
+
+jobs:
+  run-linter:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install cpplint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cpplint
+
+      - name: Run linter
+        run: find . -regex '.*\.\(cpp\|cc\|c\|h\|hpp\)' -exec cpplint --filter=-readability/casting {} +

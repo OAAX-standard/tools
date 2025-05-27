@@ -1,14 +1,16 @@
+// Windows version of timer.c
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
-#ifndef _WIN32
-
-#include <sys/time.h>
-#include <stdio.h>
-
+#ifdef _WIN32
 #include "timer.h"  // NOLINT(build/include_subdir)
+
+#include <stdio.h>
+#include <windows.h>
+
 #include "utils.h"  // NOLINT(build/include_subdir)
 
+// Helper function to get current time in microseconds
 
 void start_recording(Timer *timer) {
   timer->start = get_current_us();
@@ -22,7 +24,7 @@ void stop_recording(Timer *timer) {
 }
 
 void print_human_readable_stats(const Timer *timer,
-  int64_t number_of_inferences) {
+                                int64_t number_of_inferences) {
   if (timer->end == -1) {
     printf("Warning: Timer has not been stopped yet.\n");
     return;
@@ -40,8 +42,8 @@ void print_human_readable_stats(const Timer *timer,
   printf(
       "\n\n----------------------------------------------------------------\n");
   printf("Benchmark results:\n");
-  printf("Elapsed time: %ldh %ldm %lds %ldms %ldus\n", hours, minutes, seconds,
-         milliseconds, microseconds);
+  printf("Elapsed time: %lldh %lldm %llds %lldms %lldus\n", hours, minutes,
+         seconds, milliseconds, microseconds);
   if (number_of_inferences > 0) {
     float avg_latency_ms =
         (float)timer->elapsed_time / number_of_inferences / 1000;
@@ -51,4 +53,5 @@ void print_human_readable_stats(const Timer *timer,
   printf(
       "----------------------------------------------------------------\n\n");
 }
+
 #endif  // _WIN32
