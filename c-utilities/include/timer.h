@@ -44,4 +44,6 @@ void stop_recording(Timer *timer);
 void print_human_readable_stats(const Timer *timer,
                                 int64_t number_of_inferences);
 
+float get_fps_rate(const Timer *timer, int64_t number_of_inferences);
+
 #endif  // C_UTILITIES_INCLUDE_TIMER_H_

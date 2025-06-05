@@ -54,4 +54,13 @@ void print_human_readable_stats(const Timer *timer,
       "----------------------------------------------------------------\n\n");
 }
 
+float get_fps_rate(const Timer *timer, int64_t number_of_inferences) {
+  if (timer->elapsed_time <= 0 || number_of_inferences <= 0) {
+    return 0.0f;
+  }
+  float avg_latency_ms =
+      (float)timer->elapsed_time / number_of_inferences / 1000;
+  return 1000.0f / avg_latency_ms;
+}
+
 #endif  // _WIN32

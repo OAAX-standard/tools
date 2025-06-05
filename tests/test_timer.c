@@ -33,8 +33,20 @@ static void test_timer_without_stop() {
   print_human_readable_stats(&timer, 1);
 }
 
+// Test fps rate calculation
+static void test_timer_fps_rate() {
+  printf("Running test_timer_fps_rate...\n");
+  Timer timer;
+  start_recording(&timer);
+  sleep_ms(1000);  // Simulate 1 second of processing
+  stop_recording(&timer);
+  float fps_rate = get_fps_rate(&timer, 10);  // Simulate 10 inferences
+  printf("FPS Rate: %f\n", fps_rate);
+}
+
 void test_timer_main() {
   test_timer_basic();
   test_timer_multiple_inferences();
   test_timer_without_stop();
+  test_timer_fps_rate();
 }

@@ -3,12 +3,12 @@
 
 #ifndef _WIN32
 
-#include <sys/time.h>
-#include <stdio.h>
-
 #include "timer.h"  // NOLINT(build/include_subdir)
-#include "utils.h"  // NOLINT(build/include_subdir)
 
+#include <stdio.h>
+#include <sys/time.h>
+
+#include "utils.h"  // NOLINT(build/include_subdir)
 
 void start_recording(Timer *timer) {
   timer->start = get_current_us();
@@ -22,7 +22,7 @@ void stop_recording(Timer *timer) {
 }
 
 void print_human_readable_stats(const Timer *timer,
-  int64_t number_of_inferences) {
+                                int64_t number_of_inferences) {
   if (timer->end == -1) {
     printf("Warning: Timer has not been stopped yet.\n");
     return;
@@ -51,4 +51,14 @@ void print_human_readable_stats(const Timer *timer,
   printf(
       "----------------------------------------------------------------\n\n");
 }
+
+float get_fps_rate(const Timer *timer, int64_t number_of_inferences) {
+  if (timer->elapsed_time <= 0 || number_of_inferences <= 0) {
+    return 0.0f;
+  }
+  float avg_latency_ms =
+      (float)timer->elapsed_time / number_of_inferences / 1000;
+  return 1000.0f / avg_latency_ms;
+}
+
 #endif  // _WIN32
