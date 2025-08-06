@@ -1,12 +1,12 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifndef C_UTILITIES_INCLUDE_LIB_LOADER_H_
+#define C_UTILITIES_INCLUDE_LIB_LOADER_H_
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef C_UTILITIES_INCLUDE_LIB_LOADER_H_
-#define C_UTILITIES_INCLUDE_LIB_LOADER_H_
 
 /**
  * @brief Loads a dynamic library.
@@ -29,8 +29,8 @@ void *get_symbol_address(void *handle, const char *symbol);
  */
 void close_dynamic_library(void *handle);
 
-#endif  // C_UTILITIES_INCLUDE_LIB_LOADER_H_
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif  // C_UTILITIES_INCLUDE_LIB_LOADER_H_

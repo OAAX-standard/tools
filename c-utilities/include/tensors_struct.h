@@ -1,12 +1,12 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifndef C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
+#define C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
-#define C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -107,8 +107,8 @@ bool compare_two_tensors_structs(const tensors_struct* tensors1,
 
 tensors_struct* create_sample_tensors_struct(int seed);
 
-#endif  // C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif  // C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
