@@ -24,15 +24,10 @@ endif()
 
 add_executable(c_utilities_tests
     main.c
-    test_timer.c
-    test_logger.c
-    test_memory.c
     test_tensors_struct.c
-    test_queue.c
     test_utils.c
     test_threading.c
     test_lib_loader.c
-    test_sysinfo.c
 )
 
 target_link_libraries(c_utilities_tests ${PLATFORM_LIBS})

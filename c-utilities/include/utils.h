@@ -1,6 +1,10 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef C_UTILITIES_INCLUDE_UTILS_H_
 #define C_UTILITIES_INCLUDE_UTILS_H_
 
@@ -22,3 +26,7 @@ void sleep_ms(int64_t ms);
 int64_t get_current_us();
 
 #endif  // C_UTILITIES_INCLUDE_UTILS_H_
+
+#ifdef __cplusplus
+}
+#endif

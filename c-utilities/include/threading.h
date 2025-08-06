@@ -1,5 +1,8 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef C_UTILITIES_INCLUDE_THREADING_H_
 #define C_UTILITIES_INCLUDE_THREADING_H_
@@ -27,3 +30,7 @@ int thread_create(ThreadHandle *handle, ThreadFunc func, void *arg);
 int thread_join(ThreadHandle *handle);
 
 #endif  // C_UTILITIES_INCLUDE_THREADING_H_
+
+#ifdef __cplusplus
+}
+#endif

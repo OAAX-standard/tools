@@ -1,6 +1,10 @@
 // Copyright (c) OAAX. All rights reserved.
 // Licensed under the Apache License, Version 2.0.
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef C_UTILITIES_INCLUDE_LIB_LOADER_H_
 #define C_UTILITIES_INCLUDE_LIB_LOADER_H_
 
@@ -27,3 +31,6 @@ void close_dynamic_library(void *handle);
 
 #endif  // C_UTILITIES_INCLUDE_LIB_LOADER_H_
 
+#ifdef __cplusplus
+}
+#endif
