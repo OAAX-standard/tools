@@ -11,6 +11,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+tensors_struct* allocate_tensors_struct(int num_tensors) {
+  tensors_struct* tensors = (tensors_struct*)malloc(sizeof(tensors_struct));
+  if (tensors == NULL) {
+    return NULL;
+  }
+  tensors->num_tensors = num_tensors;
+  tensors->names = (char**)malloc(num_tensors * sizeof(char*));
+  tensors->data_types =
+      (tensor_data_type*)malloc(num_tensors * sizeof(tensor_data_type));
+  tensors->ranks = (size_t*)malloc(num_tensors * sizeof(size_t));
+  tensors->shapes = (size_t**)malloc(num_tensors * sizeof(size_t*));
+  tensors->data = (void**)malloc(num_tensors * sizeof(void*));
+  if (tensors->names == NULL || tensors->data_types == NULL ||
+      tensors->ranks == NULL || tensors->shapes == NULL ||
+      tensors->data == NULL) {
+    deep_free_tensors_struct(tensors);
+    return NULL;
+  }
+  return tensors;
+}
+
 int8_t get_data_type_byte_size(tensor_data_type type) {
   switch (type) {
     case DATA_TYPE_FLOAT:

@@ -4,16 +4,16 @@
 #ifndef C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
 #define C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum tensor_data_type {
   DATA_TYPE_UNDEFINED = 0,
@@ -43,6 +43,18 @@ typedef struct tensors_struct {
   size_t** shapes;               // Shapes of the tensors
   void** data;                   // Data of the tensors
 } tensors_struct;
+
+/**
+ * @brief Allocates and initializes a tensors_struct object.
+ *
+ * This function dynamically allocates memory for a tensors_struct object
+ * including its fields.
+ *
+ * @param num_tensors The number of tensors to allocate in the structure.
+ * @return A pointer to the allocated tensors_struct object, or nullptr if
+ *         the allocation fails.
+ */
+tensors_struct* allocate_tensors_struct(int num_tensors);
 
 /**
  * @brief Deeply frees all memory associated with a tensors_struct.
@@ -108,7 +120,7 @@ bool compare_two_tensors_structs(const tensors_struct* tensors1,
 tensors_struct* create_sample_tensors_struct(int seed);
 
 #ifdef __cplusplus
-}
+}  // extern "C"
 #endif
 
 #endif  // C_UTILITIES_INCLUDE_TENSORS_STRUCT_H_
