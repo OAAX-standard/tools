@@ -199,14 +199,6 @@ size_t element_byte_size(TensorElementType data_type);
 // ---------------------------------------------------------------------------
 
 /**
- * @brief Build a Config view from caller-owned parallel arrays.
- *
- * Does not copy anything. The caller must keep keys/values alive as long as
- * the Config is used. Do NOT pass the result to config_free().
- */
-Config config_create(int length, const char **keys, const char **values);
-
-/**
  * @brief Allocate an empty heap-owned Config.
  *
  * Must be freed with config_free(). Returns NULL on OOM.
