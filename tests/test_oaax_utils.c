@@ -281,6 +281,70 @@ static void test_tensors_print() {
 }
 
 // ---------------------------------------------------------------------------
+// config_alloc / config_set / config_get / config_extend / config_delete
+// ---------------------------------------------------------------------------
+
+static void test_config_managed() {
+    printf("  test_config_managed... ");
+
+    // alloc empty
+    Config *c = config_alloc();
+    assert(c != NULL);
+    assert(c->length == 0);
+
+    // set new keys
+    assert(config_set(c, "device", "CPU") == true);
+    assert(config_set(c, "log_level", "2") == true);
+    assert(c->length == 2);
+
+    // get existing and missing
+    assert(strcmp(config_get(c, "device"), "CPU") == 0);
+    assert(strcmp(config_get(c, "log_level"), "2") == 0);
+    assert(config_get(c, "missing") == NULL);
+    assert(config_get(NULL, "device") == NULL);
+    assert(config_get(c, NULL) == NULL);
+
+    // update existing key — length must not change
+    assert(config_set(c, "device", "GPU") == true);
+    assert(c->length == 2);
+    assert(strcmp(config_get(c, "device"), "GPU") == 0);
+
+    // extend: add new keys and overwrite an existing one
+    Config *src = config_alloc();
+    assert(config_set(src, "cache_dir", "/tmp") == true);
+    assert(config_set(src, "device", "NPU") == true);  // overwrites
+    assert(config_extend(c, src) == true);
+    assert(c->length == 3);
+    assert(strcmp(config_get(c, "cache_dir"), "/tmp") == 0);
+    assert(strcmp(config_get(c, "device"), "NPU") == 0);
+
+    // delete existing key
+    assert(config_delete(c, "log_level") == true);
+    assert(c->length == 2);
+    assert(config_get(c, "log_level") == NULL);
+    // remaining keys must still be accessible
+    assert(strcmp(config_get(c, "device"), "NPU") == 0);
+    assert(strcmp(config_get(c, "cache_dir"), "/tmp") == 0);
+
+    // delete non-existent key
+    assert(config_delete(c, "nonexistent") == false);
+
+    // NULL safety
+    assert(config_set(NULL, "k", "v") == false);
+    assert(config_set(c, NULL, "v") == false);
+    assert(config_delete(NULL, "device") == false);
+    assert(config_delete(c, NULL) == false);
+    assert(config_extend(NULL, src) == false);
+    assert(config_extend(c, NULL) == false);
+
+    config_free(src);
+    config_free(c);
+    config_free(NULL);  // safe
+
+    printf("OK\n");
+}
+
+// ---------------------------------------------------------------------------
 // Entry point
 // ---------------------------------------------------------------------------
 
@@ -294,6 +358,7 @@ int test_oaax_utils_main(void) {
     test_element_byte_size();
     test_status_string();
     test_config_create();
+    test_config_managed();
     test_tensors_print();
     printf("All oaax_utils tests passed.\n\n");
     return 0;

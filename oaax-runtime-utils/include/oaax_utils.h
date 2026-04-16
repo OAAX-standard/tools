@@ -195,16 +195,61 @@ size_t compute_data_size(TensorElementType data_type, int rank, const int *shape
 size_t element_byte_size(TensorElementType data_type);
 
 // ---------------------------------------------------------------------------
-// Config helper
+// Config helpers
 // ---------------------------------------------------------------------------
 
 /**
- * @brief Build a Config from parallel key/value arrays.
+ * @brief Build a Config view from caller-owned parallel arrays.
  *
- * Does not copy the arrays — the returned Config points into the caller's
- * arrays. The caller must keep them alive as long as the Config is used.
+ * Does not copy anything. The caller must keep keys/values alive as long as
+ * the Config is used. Do NOT pass the result to config_free().
  */
 Config config_create(int length, const char **keys, const char **values);
+
+/**
+ * @brief Allocate an empty heap-owned Config.
+ *
+ * All subsequent mutations (config_set, config_delete, config_extend) on this
+ * Config are safe. Must be freed with config_free(). Returns NULL on OOM.
+ */
+Config *config_alloc(void);
+
+/**
+ * @brief Free a heap-owned Config created by config_alloc().
+ *
+ * Frees every copied key and value string, the internal arrays, and the Config
+ * struct itself. Safe to call with NULL.
+ */
+void config_free(Config *c);
+
+/**
+ * @brief Set or update a key in a heap-owned Config.
+ *
+ * Copies key and value (strdup). If the key already exists its value is
+ * replaced. Returns false on OOM or invalid arguments.
+ */
+bool config_set(Config *c, const char *key, const char *value);
+
+/**
+ * @brief Return the value for a key, or NULL if not found.
+ *
+ * Linear scan. The returned pointer is owned by the Config — do not free it.
+ */
+const char *config_get(const Config *c, const char *key);
+
+/**
+ * @brief Merge all entries from src into dst.
+ *
+ * Existing keys in dst are overwritten with src values. Returns false on OOM.
+ */
+bool config_extend(Config *dst, const Config *src);
+
+/**
+ * @brief Remove an entry by key from a heap-owned Config.
+ *
+ * Returns true if the key was found and removed, false otherwise.
+ */
+bool config_delete(Config *c, const char *key);
 
 // ---------------------------------------------------------------------------
 // Status helper
