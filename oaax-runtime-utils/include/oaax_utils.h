@@ -162,6 +162,13 @@ void tensors_set(Tensors *tensors, int index,
                  void *data, size_t data_size);
 
 /**
+ * @brief Find a descriptor by name. Returns NULL if not found or tensors is NULL.
+ *
+ * Linear scan. The returned pointer is owned by the Tensors — do not free it.
+ */
+const TensorDescriptor *tensors_find(const Tensors *tensors, const char *name);
+
+/**
  * @brief Compare two Tensors for equality (metadata + data).
  *
  * Returns false if either pointer is NULL or if any field differs.
@@ -169,9 +176,29 @@ void tensors_set(Tensors *tensors, int index,
 bool tensors_compare(const Tensors *a, const Tensors *b);
 
 /**
+ * @brief Validate a Tensors for internal consistency.
+ *
+ * Checks: rank > 0 implies shape != NULL; data_size > 0 implies data != NULL.
+ * Returns false and prints the first inconsistency found. NULL input returns false.
+ */
+bool tensors_validate(const Tensors *tensors);
+
+/**
  * @brief Print a human-readable summary of a Tensors to stdout.
  */
 void tensors_print(const Tensors *tensors);
+
+// ---------------------------------------------------------------------------
+// Data type helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * @brief Return a human-readable name for a TensorElementType.
+ *
+ * Returns "DATA_TYPE_UNDEFINED" for unrecognised values.
+ * The returned string is a string literal — never free it.
+ */
+const char *data_type_string(TensorElementType data_type);
 
 // ---------------------------------------------------------------------------
 // Data size helpers
@@ -235,6 +262,11 @@ const char *config_get(const Config *c, const char *key);
  * Returns true if the key was found and removed, false otherwise.
  */
 bool config_delete(Config *c, const char *key);
+
+/**
+ * @brief Print all key-value pairs in a Config to stdout.
+ */
+void config_print(const Config *c);
 
 // ---------------------------------------------------------------------------
 // Status helper

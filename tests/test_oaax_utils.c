@@ -221,6 +221,26 @@ static void test_element_byte_size() {
 }
 
 // ---------------------------------------------------------------------------
+// data_type_string
+// ---------------------------------------------------------------------------
+
+static void test_data_type_string() {
+    printf("  test_data_type_string... ");
+
+    assert(strcmp(data_type_string(DATA_TYPE_FLOAT),          "DATA_TYPE_FLOAT")          == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_INT8),           "DATA_TYPE_INT8")           == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_FLOAT16),        "DATA_TYPE_FLOAT16")        == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_BFLOAT16),       "DATA_TYPE_BFLOAT16")       == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_INT4),           "DATA_TYPE_INT4")           == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_UINT2),          "DATA_TYPE_UINT2")          == 0);
+    assert(strcmp(data_type_string(DATA_TYPE_UNDEFINED),      "DATA_TYPE_UNDEFINED")      == 0);
+    // unknown value → fallback
+    assert(strcmp(data_type_string((TensorElementType)999),   "DATA_TYPE_UNDEFINED")      == 0);
+
+    printf("OK\n");
+}
+
+// ---------------------------------------------------------------------------
 // runtime_status_string
 // ---------------------------------------------------------------------------
 
@@ -233,6 +253,87 @@ static void test_status_string() {
     assert(strcmp(runtime_status_string(RUNTIME_STATUS_INVALID_MODEL_ID), "RUNTIME_STATUS_INVALID_MODEL_ID") == 0);
     // unknown value → fallback
     assert(strcmp(runtime_status_string((RuntimeStatus)999), "RUNTIME_STATUS_UNKNOWN_ERROR") == 0);
+
+    printf("OK\n");
+}
+
+// ---------------------------------------------------------------------------
+// tensors_find
+// ---------------------------------------------------------------------------
+
+static void test_tensors_find() {
+    printf("  test_tensors_find... ");
+
+    Tensors *t = tensors_alloc(2);
+    float data[4] = {1.f, 2.f, 3.f, 4.f};
+    int shape[] = {4};
+    tensors_set(t, 0, "input",  DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+    tensors_set(t, 1, "output", DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+
+    const TensorDescriptor *d = tensors_find(t, "output");
+    assert(d != NULL);
+    assert(strcmp(d->name, "output") == 0);
+
+    assert(tensors_find(t, "missing") == NULL);
+    assert(tensors_find(NULL, "input") == NULL);
+    assert(tensors_find(t, NULL) == NULL);
+
+    t->tensors[0].data = NULL;
+    t->tensors[1].data = NULL;
+    tensors_free(t);
+
+    printf("OK\n");
+}
+
+// ---------------------------------------------------------------------------
+// tensors_validate
+// ---------------------------------------------------------------------------
+
+static void test_tensors_validate() {
+    printf("  test_tensors_validate... ");
+
+    // valid tensors
+    Tensors *t = tensors_alloc(1);
+    float data[4] = {0};
+    int shape[] = {4};
+    tensors_set(t, 0, "x", DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+    assert(tensors_validate(t) == true);
+    t->tensors[0].data = NULL;
+    tensors_free(t);
+
+    // rank > 0 but shape == NULL
+    Tensors *bad_shape = tensors_alloc(1);
+    bad_shape->tensors[0].rank = 2;
+    bad_shape->tensors[0].shape = NULL;
+    assert(tensors_validate(bad_shape) == false);
+    tensors_free(bad_shape);
+
+    // data_size > 0 but data == NULL
+    Tensors *bad_data = tensors_alloc(1);
+    bad_data->tensors[0].data_size = 16;
+    bad_data->tensors[0].data = NULL;
+    assert(tensors_validate(bad_data) == false);
+    tensors_free(bad_data);
+
+    // NULL input
+    assert(tensors_validate(NULL) == false);
+
+    printf("OK\n");
+}
+
+// ---------------------------------------------------------------------------
+// config_print (smoke test — just checks it doesn't crash)
+// ---------------------------------------------------------------------------
+
+static void test_config_print() {
+    printf("  test_config_print... ");
+
+    Config *c = config_alloc();
+    config_set(c, "device", "CPU");
+    config_set(c, "log_level", "2");
+    config_print(c);
+    config_print(NULL);
+    config_free(c);
 
     printf("OK\n");
 }
@@ -324,8 +425,12 @@ int test_oaax_utils_main(void) {
     test_compare();
     test_compute_data_size();
     test_element_byte_size();
+    test_data_type_string();
     test_status_string();
+    test_tensors_find();
+    test_tensors_validate();
     test_config_managed();
+    test_config_print();
     test_tensors_print();
     printf("All oaax_utils tests passed.\n\n");
     return 0;
