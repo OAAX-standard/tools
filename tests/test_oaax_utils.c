@@ -312,6 +312,14 @@ static void test_tensors_validate() {
     neg_count->num_tensors = 0;
     tensors_free(neg_count);
 
+    // num_tensors > 0 but tensors array is NULL
+    Tensors *null_arr = tensors_alloc(0);
+    null_arr->num_tensors = 2;
+    null_arr->tensors = NULL;
+    assert(tensors_validate(null_arr) == false);
+    null_arr->num_tensors = 0;
+    tensors_free(null_arr);
+
     // negative rank
     Tensors *neg_rank = tensors_alloc(1);
     neg_rank->tensors[0].rank = -1;
@@ -337,6 +345,27 @@ static void test_tensors_validate() {
     bad_data->tensors[0].data_size = 16;
     assert(tensors_validate(bad_data) == false);
     tensors_free(bad_data);
+
+    // warning: undefined data type (does not fail)
+    Tensors *undef_type = tensors_alloc(1);
+    tensors_set(undef_type, 0, "x", DATA_TYPE_UNDEFINED, 1, shape, data, sizeof(data));
+    assert(tensors_validate(undef_type) == true);
+    undef_type->tensors[0].data = NULL;
+    tensors_free(undef_type);
+
+    // warning: data != NULL but data_size == 0 (does not fail)
+    Tensors *zero_size = tensors_alloc(1);
+    tensors_set(zero_size, 0, "x", DATA_TYPE_FLOAT, 1, shape, data, 0);
+    assert(tensors_validate(zero_size) == true);
+    zero_size->tensors[0].data = NULL;
+    tensors_free(zero_size);
+
+    // warning: data_size mismatch vs computed size (does not fail)
+    Tensors *bad_size = tensors_alloc(1);
+    tensors_set(bad_size, 0, "x", DATA_TYPE_FLOAT, 1, shape, data, 99);
+    assert(tensors_validate(bad_size) == true);
+    bad_size->tensors[0].data = NULL;
+    tensors_free(bad_size);
 
     // warning: no name (does not fail)
     Tensors *no_name = tensors_alloc(1);

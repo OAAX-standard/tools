@@ -248,12 +248,19 @@ bool tensors_validate(const Tensors *tensors) {
         printf("tensors_validate: num_tensors is negative (%d)\n", tensors->num_tensors);
         return false;
     }
+    if (tensors->num_tensors > 0 && tensors->tensors == NULL) {
+        printf("tensors_validate: num_tensors is %d but tensors array is NULL\n", tensors->num_tensors);
+        return false;
+    }
 
     for (int i = 0; i < tensors->num_tensors; i++) {
         const TensorDescriptor *d = &tensors->tensors[i];
 
         if (d->name == NULL || d->name[0] == '\0')
             printf("tensors_validate: WARNING descriptor %d has no name\n", i);
+
+        if (d->data_type == DATA_TYPE_UNDEFINED)
+            printf("tensors_validate: WARNING descriptor %d has undefined data type\n", i);
 
         if (d->rank < 0) {
             printf("tensors_validate: descriptor %d has negative rank (%d)\n", i, d->rank);
@@ -272,6 +279,17 @@ bool tensors_validate(const Tensors *tensors) {
         if (d->data_size > 0 && d->data == NULL) {
             printf("tensors_validate: descriptor %d has data_size %zu but data is NULL\n", i, d->data_size);
             return false;
+        }
+        if (d->data != NULL && d->data_size == 0)
+            printf("tensors_validate: WARNING descriptor %d has data pointer but data_size is 0\n", i);
+
+        // check data_size against computed size when enough info is available
+        if (d->data_type != DATA_TYPE_UNDEFINED && d->rank >= 0 && d->shape != NULL) {
+            size_t expected = compute_data_size(d->data_type, d->rank, d->shape);
+            if (expected > 0 && d->data_size != expected)
+                printf("tensors_validate: WARNING descriptor %d data_size is %zu but expected %zu"
+                       " for type %s and given shape\n",
+                       i, d->data_size, expected, data_type_string(d->data_type));
         }
     }
 
