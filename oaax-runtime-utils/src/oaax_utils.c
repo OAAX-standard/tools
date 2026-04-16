@@ -268,7 +268,9 @@ Config config_create(int length, const char **keys, const char **values) {
     return c;
 }
 
-Config *config_alloc(void) {
+Config *config_alloc(int n) {
+    if (n < 0)
+        return NULL;
     return (Config *)calloc(1, sizeof(Config));
 }
 
@@ -318,7 +320,6 @@ bool config_set(Config *c, const char *key, const char *value) {
     char **new_keys   = (char **)realloc(keys,   (size_t)new_len * sizeof(char *));
     char **new_values = (char **)realloc(values, (size_t)new_len * sizeof(char *));
 
-    // On partial realloc failure update the pointers that did move
     if (new_keys   != NULL) c->keys   = (const char **)new_keys;
     if (new_values != NULL) c->values = (const char **)new_values;
 
@@ -344,13 +345,6 @@ const char *config_get(const Config *c, const char *key) {
     return NULL;
 }
 
-bool config_add(Config *c, const char *key, const char *value) {
-    if (c == NULL || key == NULL)
-        return false;
-    if (config_get(c, key) != NULL)
-        return false;
-    return config_set(c, key, value);
-}
 
 bool config_delete(Config *c, const char *key) {
     if (c == NULL || key == NULL)
