@@ -287,7 +287,7 @@ static void test_tensors_print() {
 static void test_config_managed() {
     printf("  test_config_managed... ");
 
-    Config *c = config_alloc(4);
+    Config *c = config_alloc();
     assert(c != NULL);
     assert(c->length == 0);
 

@@ -268,9 +268,7 @@ Config config_create(int length, const char **keys, const char **values) {
     return c;
 }
 
-Config *config_alloc(int n) {
-    if (n < 0)
-        return NULL;
+Config *config_alloc(void) {
     return (Config *)calloc(1, sizeof(Config));
 }
 
