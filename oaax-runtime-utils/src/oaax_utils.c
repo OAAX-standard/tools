@@ -8,6 +8,43 @@
 #include <string.h>
 
 // ---------------------------------------------------------------------------
+// Data type helpers
+// ---------------------------------------------------------------------------
+
+const char *data_type_string(TensorElementType data_type) {
+    switch (data_type) {
+        case DATA_TYPE_UNDEFINED:      return "DATA_TYPE_UNDEFINED";
+        case DATA_TYPE_FLOAT:          return "DATA_TYPE_FLOAT";
+        case DATA_TYPE_UINT8:          return "DATA_TYPE_UINT8";
+        case DATA_TYPE_INT8:           return "DATA_TYPE_INT8";
+        case DATA_TYPE_UINT16:         return "DATA_TYPE_UINT16";
+        case DATA_TYPE_INT16:          return "DATA_TYPE_INT16";
+        case DATA_TYPE_INT32:          return "DATA_TYPE_INT32";
+        case DATA_TYPE_INT64:          return "DATA_TYPE_INT64";
+        case DATA_TYPE_STRING:         return "DATA_TYPE_STRING";
+        case DATA_TYPE_BOOL:           return "DATA_TYPE_BOOL";
+        case DATA_TYPE_FLOAT16:        return "DATA_TYPE_FLOAT16";
+        case DATA_TYPE_DOUBLE:         return "DATA_TYPE_DOUBLE";
+        case DATA_TYPE_UINT32:         return "DATA_TYPE_UINT32";
+        case DATA_TYPE_UINT64:         return "DATA_TYPE_UINT64";
+        case DATA_TYPE_COMPLEX64:      return "DATA_TYPE_COMPLEX64";
+        case DATA_TYPE_COMPLEX128:     return "DATA_TYPE_COMPLEX128";
+        case DATA_TYPE_BFLOAT16:       return "DATA_TYPE_BFLOAT16";
+        case DATA_TYPE_FLOAT8E4M3FN:   return "DATA_TYPE_FLOAT8E4M3FN";
+        case DATA_TYPE_FLOAT8E4M3FNUZ: return "DATA_TYPE_FLOAT8E4M3FNUZ";
+        case DATA_TYPE_FLOAT8E5M2:     return "DATA_TYPE_FLOAT8E5M2";
+        case DATA_TYPE_FLOAT8E5M2FNUZ: return "DATA_TYPE_FLOAT8E5M2FNUZ";
+        case DATA_TYPE_UINT4:          return "DATA_TYPE_UINT4";
+        case DATA_TYPE_INT4:           return "DATA_TYPE_INT4";
+        case DATA_TYPE_FLOAT4E2M1:     return "DATA_TYPE_FLOAT4E2M1";
+        case DATA_TYPE_FLOAT8E8M0:     return "DATA_TYPE_FLOAT8E8M0";
+        case DATA_TYPE_UINT2:          return "DATA_TYPE_UINT2";
+        case DATA_TYPE_INT2:           return "DATA_TYPE_INT2";
+        default:                       return "DATA_TYPE_UNDEFINED";
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Data size helpers
 // ---------------------------------------------------------------------------
 
@@ -191,6 +228,36 @@ void tensors_set(Tensors *tensors, int index,
     }
 }
 
+const TensorDescriptor *tensors_find(const Tensors *tensors, const char *name) {
+    if (tensors == NULL || name == NULL)
+        return NULL;
+    for (int i = 0; i < tensors->num_tensors; i++) {
+        if (tensors->tensors[i].name != NULL &&
+            strcmp(tensors->tensors[i].name, name) == 0)
+            return &tensors->tensors[i];
+    }
+    return NULL;
+}
+
+bool tensors_validate(const Tensors *tensors) {
+    if (tensors == NULL) {
+        printf("tensors_validate: NULL pointer\n");
+        return false;
+    }
+    for (int i = 0; i < tensors->num_tensors; i++) {
+        const TensorDescriptor *d = &tensors->tensors[i];
+        if (d->rank > 0 && d->shape == NULL) {
+            printf("tensors_validate: descriptor %d has rank %d but shape is NULL\n", i, d->rank);
+            return false;
+        }
+        if (d->data_size > 0 && d->data == NULL) {
+            printf("tensors_validate: descriptor %d has data_size %zu but data is NULL\n", i, d->data_size);
+            return false;
+        }
+    }
+    return true;
+}
+
 bool tensors_compare(const Tensors *a, const Tensors *b) {
     if (a == NULL || b == NULL)
         return false;
@@ -242,10 +309,10 @@ void tensors_print(const Tensors *tensors) {
     printf("Tensors { id=%d, num_tensors=%d }\n", tensors->id, tensors->num_tensors);
     for (int i = 0; i < tensors->num_tensors; i++) {
         const TensorDescriptor *d = &tensors->tensors[i];
-        printf("  [%d] name='%s'  type=%d  rank=%d  data_size=%zu  shape=[",
+        printf("  [%d] name='%s'  type=%s  rank=%d  data_size=%zu  shape=[",
                i,
                d->name ? d->name : "(null)",
-               (int)d->data_type,
+               data_type_string(d->data_type),
                d->rank,
                d->data_size);
         for (int j = 0; j < d->rank; j++) {
@@ -354,6 +421,16 @@ bool config_delete(Config *c, const char *key) {
         }
     }
     return false;
+}
+
+void config_print(const Config *c) {
+    if (c == NULL) {
+        printf("Config: NULL\n");
+        return;
+    }
+    printf("Config { length=%d }\n", c->length);
+    for (int i = 0; i < c->length; i++)
+        printf("  [%d] '%s' = '%s'\n", i, c->keys[i], c->values[i]);
 }
 
 // ---------------------------------------------------------------------------
