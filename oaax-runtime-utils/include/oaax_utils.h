@@ -178,9 +178,12 @@ bool tensors_compare(const Tensors *a, const Tensors *b);
 /**
  * @brief Validate a Tensors for internal consistency.
  *
- * Errors (returns false): NULL input, num_tensors < 0, rank < 0, any shape
- * dimension <= 0, rank > 0 with NULL shape, data_size > 0 with NULL data.
- * Warnings (printed but do not fail): NULL or empty name, duplicate names.
+ * Errors (returns false): NULL input, num_tensors < 0, num_tensors > 0 with
+ * NULL tensors array, rank < 0, rank > 0 with NULL shape, shape[i] <= 0,
+ * data_size > 0 with NULL data.
+ * Warnings (printed, do not fail): undefined data type, NULL/empty name,
+ * data != NULL with data_size == 0, data_size mismatch vs computed size,
+ * duplicate names.
  */
 bool tensors_validate(const Tensors *tensors);
 
