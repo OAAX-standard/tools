@@ -344,14 +344,12 @@ const char *config_get(const Config *c, const char *key) {
     return NULL;
 }
 
-bool config_extend(Config *dst, const Config *src) {
-    if (dst == NULL || src == NULL)
+bool config_add(Config *c, const char *key, const char *value) {
+    if (c == NULL || key == NULL)
         return false;
-    for (int i = 0; i < src->length; i++) {
-        if (!config_set(dst, src->keys[i], src->values[i]))
-            return false;
-    }
-    return true;
+    if (config_get(c, key) != NULL)
+        return false;
+    return config_set(c, key, value);
 }
 
 bool config_delete(Config *c, const char *key) {

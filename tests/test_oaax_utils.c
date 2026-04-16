@@ -309,21 +309,20 @@ static void test_config_managed() {
     assert(c->length == 2);
     assert(strcmp(config_get(c, "device"), "GPU") == 0);
 
-    // extend: add new keys and overwrite an existing one
-    Config *src = config_alloc();
-    assert(config_set(src, "cache_dir", "/tmp") == true);
-    assert(config_set(src, "device", "NPU") == true);  // overwrites
-    assert(config_extend(c, src) == true);
+    // add: new key succeeds, duplicate key fails
+    assert(config_add(c, "cache_dir", "/tmp") == true);
     assert(c->length == 3);
     assert(strcmp(config_get(c, "cache_dir"), "/tmp") == 0);
-    assert(strcmp(config_get(c, "device"), "NPU") == 0);
+    assert(config_add(c, "device", "NPU") == false);  // already exists
+    assert(c->length == 3);
+    assert(strcmp(config_get(c, "device"), "GPU") == 0);  // unchanged
 
     // delete existing key
     assert(config_delete(c, "log_level") == true);
     assert(c->length == 2);
     assert(config_get(c, "log_level") == NULL);
     // remaining keys must still be accessible
-    assert(strcmp(config_get(c, "device"), "NPU") == 0);
+    assert(strcmp(config_get(c, "device"), "GPU") == 0);
     assert(strcmp(config_get(c, "cache_dir"), "/tmp") == 0);
 
     // delete non-existent key
@@ -332,12 +331,11 @@ static void test_config_managed() {
     // NULL safety
     assert(config_set(NULL, "k", "v") == false);
     assert(config_set(c, NULL, "v") == false);
+    assert(config_add(NULL, "k", "v") == false);
+    assert(config_add(c, NULL, "v") == false);
     assert(config_delete(NULL, "device") == false);
     assert(config_delete(c, NULL) == false);
-    assert(config_extend(NULL, src) == false);
-    assert(config_extend(c, NULL) == false);
 
-    config_free(src);
     config_free(c);
     config_free(NULL);  // safe
 
