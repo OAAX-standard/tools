@@ -257,7 +257,7 @@ void tensors_print(const Tensors *tensors) {
 }
 
 // ---------------------------------------------------------------------------
-// Config helper
+// Config helpers
 // ---------------------------------------------------------------------------
 
 Config config_create(int length, const char **keys, const char **values) {
@@ -266,6 +266,112 @@ Config config_create(int length, const char **keys, const char **values) {
     c.keys   = keys;
     c.values = values;
     return c;
+}
+
+Config *config_alloc(void) {
+    return (Config *)calloc(1, sizeof(Config));
+}
+
+void config_free(Config *c) {
+    if (c == NULL)
+        return;
+    char **keys   = (char **)c->keys;
+    char **values = (char **)c->values;
+    for (int i = 0; i < c->length; i++) {
+        free(keys[i]);
+        free(values[i]);
+    }
+    free(keys);
+    free(values);
+    free(c);
+}
+
+bool config_set(Config *c, const char *key, const char *value) {
+    if (c == NULL || key == NULL)
+        return false;
+
+    char **keys   = (char **)c->keys;
+    char **values = (char **)c->values;
+
+    // Update existing key
+    for (int i = 0; i < c->length; i++) {
+        if (strcmp(keys[i], key) == 0) {
+            char *v = strdup(value != NULL ? value : "");
+            if (v == NULL)
+                return false;
+            free(values[i]);
+            values[i] = v;
+            return true;
+        }
+    }
+
+    // New entry — duplicate strings first, then grow arrays
+    char *k = strdup(key);
+    char *v = strdup(value != NULL ? value : "");
+    if (k == NULL || v == NULL) {
+        free(k);
+        free(v);
+        return false;
+    }
+
+    int    new_len    = c->length + 1;
+    char **new_keys   = (char **)realloc(keys,   (size_t)new_len * sizeof(char *));
+    char **new_values = (char **)realloc(values, (size_t)new_len * sizeof(char *));
+
+    // On partial realloc failure update the pointers that did move
+    if (new_keys   != NULL) c->keys   = (const char **)new_keys;
+    if (new_values != NULL) c->values = (const char **)new_values;
+
+    if (new_keys == NULL || new_values == NULL) {
+        free(k);
+        free(v);
+        return false;
+    }
+
+    new_keys[c->length]   = k;
+    new_values[c->length] = v;
+    c->length = new_len;
+    return true;
+}
+
+const char *config_get(const Config *c, const char *key) {
+    if (c == NULL || key == NULL)
+        return NULL;
+    for (int i = 0; i < c->length; i++) {
+        if (strcmp(c->keys[i], key) == 0)
+            return c->values[i];
+    }
+    return NULL;
+}
+
+bool config_extend(Config *dst, const Config *src) {
+    if (dst == NULL || src == NULL)
+        return false;
+    for (int i = 0; i < src->length; i++) {
+        if (!config_set(dst, src->keys[i], src->values[i]))
+            return false;
+    }
+    return true;
+}
+
+bool config_delete(Config *c, const char *key) {
+    if (c == NULL || key == NULL)
+        return false;
+    char **keys   = (char **)c->keys;
+    char **values = (char **)c->values;
+    for (int i = 0; i < c->length; i++) {
+        if (strcmp(keys[i], key) == 0) {
+            free(keys[i]);
+            free(values[i]);
+            for (int j = i; j < c->length - 1; j++) {
+                keys[j]   = keys[j + 1];
+                values[j] = values[j + 1];
+            }
+            c->length--;
+            return true;
+        }
+    }
+    return false;
 }
 
 // ---------------------------------------------------------------------------
