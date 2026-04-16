@@ -76,12 +76,12 @@ typedef enum TensorElementType {
  * tensors_free() for the expected free order.
  */
 typedef struct TensorDescriptor {
-    char             *name;      // null-terminated tensor name
-    TensorElementType data_type; // element type
-    int               rank;      // number of dimensions
-    int              *shape;     // array of rank dimension sizes
-    size_t            data_size; // byte size of data buffer
-    void             *data;      // tensor data buffer
+    char* name;                   // null-terminated tensor name
+    TensorElementType data_type;  // element type
+    int rank;                     // number of dimensions
+    int* shape;                   // array of rank dimension sizes
+    size_t data_size;             // byte size of data buffer
+    void* data;                   // tensor data buffer
 } TensorDescriptor;
 
 /**
@@ -91,18 +91,18 @@ typedef struct TensorDescriptor {
  * the corresponding output Tensors so requests can be matched.
  */
 typedef struct Tensors {
-    int               id;          // caller-assigned request ID
-    int               num_tensors; // number of descriptors
-    TensorDescriptor *tensors;     // array of num_tensors descriptors
+    int id;                     // caller-assigned request ID
+    int num_tensors;            // number of descriptors
+    TensorDescriptor* tensors;  // array of num_tensors descriptors
 } Tensors;
 
 /**
  * @brief Key-value configuration. All values are null-terminated strings.
  */
 typedef struct Config {
-    int          length; // number of entries
-    const char **keys;
-    const char **values;
+    int length;  // number of entries
+    const char** keys;
+    const char** values;
 } Config;
 
 /**
@@ -111,10 +111,10 @@ typedef struct Config {
  * Provide either file_path or (model_data + model_size), not both.
  */
 typedef struct ModelConfig {
-    const char          *file_path;  // path to model file (optional)
-    const unsigned char *model_data; // in-memory model blob (optional)
-    size_t               model_size; // byte size of model_data (optional)
-    Config               config;     // model-specific key-value config
+    const char* file_path;            // path to model file (optional)
+    const unsigned char* model_data;  // in-memory model blob (optional)
+    size_t model_size;                // byte size of model_data (optional)
+    Config config;                    // model-specific key-value config
 } ModelConfig;
 
 // ---------------------------------------------------------------------------
@@ -127,7 +127,7 @@ typedef struct ModelConfig {
  * Returns NULL on allocation failure.
  * Free with tensors_free().
  */
-Tensors *tensors_alloc(int num_tensors);
+Tensors* tensors_alloc(int num_tensors);
 
 /**
  * @brief Deep-free a Tensors and all its descriptors.
@@ -135,7 +135,7 @@ Tensors *tensors_alloc(int num_tensors);
  * Frees name, shape, and data for every descriptor, then the descriptor
  * array, then the Tensors struct itself. Safe to call with NULL.
  */
-void tensors_free(Tensors *tensors);
+void tensors_free(Tensors* tensors);
 
 /**
  * @brief Deep-copy a Tensors.
@@ -143,7 +143,7 @@ void tensors_free(Tensors *tensors);
  * Allocates fresh memory for every field. Returns NULL on failure.
  * The copy must be freed with tensors_free().
  */
-Tensors *tensors_deep_copy(const Tensors *src);
+Tensors* tensors_deep_copy(const Tensors* src);
 
 /**
  * @brief Fill one descriptor inside a Tensors.
@@ -155,25 +155,22 @@ Tensors *tensors_deep_copy(const Tensors *src);
  * Any previously allocated name or shape at index is freed before
  * overwriting. Does nothing if tensors is NULL or index is out of range.
  */
-void tensors_set(Tensors *tensors, int index,
-                 const char *name,
-                 TensorElementType data_type,
-                 int rank, const int *shape,
-                 void *data, size_t data_size);
+void tensors_set(Tensors* tensors, int index, const char* name, TensorElementType data_type, int rank, const int* shape,
+                 void* data, size_t data_size);
 
 /**
  * @brief Find a descriptor by name. Returns NULL if not found or tensors is NULL.
  *
  * Linear scan. The returned pointer is owned by the Tensors — do not free it.
  */
-const TensorDescriptor *tensors_find(const Tensors *tensors, const char *name);
+const TensorDescriptor* tensors_find(const Tensors* tensors, const char* name);
 
 /**
  * @brief Compare two Tensors for equality (metadata + data).
  *
  * Returns false if either pointer is NULL or if any field differs.
  */
-bool tensors_compare(const Tensors *a, const Tensors *b);
+bool tensors_compare(const Tensors* a, const Tensors* b);
 
 /**
  * @brief Validate a Tensors for internal consistency.
@@ -185,12 +182,12 @@ bool tensors_compare(const Tensors *a, const Tensors *b);
  * data != NULL with data_size == 0, data_size mismatch vs computed size,
  * duplicate names.
  */
-bool tensors_validate(const Tensors *tensors);
+bool tensors_validate(const Tensors* tensors);
 
 /**
  * @brief Print a human-readable summary of a Tensors to stdout.
  */
-void tensors_print(const Tensors *tensors);
+void tensors_print(const Tensors* tensors);
 
 // ---------------------------------------------------------------------------
 // Data type helpers
@@ -202,7 +199,7 @@ void tensors_print(const Tensors *tensors);
  * Returns "DATA_TYPE_UNDEFINED" for unrecognised values.
  * The returned string is a string literal — never free it.
  */
-const char *data_type_string(TensorElementType data_type);
+const char* data_type_string(TensorElementType data_type);
 
 // ---------------------------------------------------------------------------
 // Data size helpers
@@ -215,7 +212,7 @@ const char *data_type_string(TensorElementType data_type);
  * INT2/UINT2: packed four per byte) correctly.
  * Returns 0 for DATA_TYPE_UNDEFINED or unknown types.
  */
-size_t compute_data_size(TensorElementType data_type, int rank, const int *shape);
+size_t compute_data_size(TensorElementType data_type, int rank, const int* shape);
 
 /**
  * @brief Return the byte size of one element for a given type.
@@ -234,7 +231,7 @@ size_t element_byte_size(TensorElementType data_type);
  *
  * Must be freed with config_free(). Returns NULL on OOM.
  */
-Config *config_alloc(void);
+Config* config_alloc(void);
 
 /**
  * @brief Free a heap-owned Config created by config_alloc().
@@ -242,7 +239,7 @@ Config *config_alloc(void);
  * Frees every copied key and value string, the internal arrays, and the Config
  * struct itself. Safe to call with NULL.
  */
-void config_free(Config *c);
+void config_free(Config* c);
 
 /**
  * @brief Set or update a key in a heap-owned Config.
@@ -250,27 +247,26 @@ void config_free(Config *c);
  * Copies key and value (strdup). If the key already exists its value is
  * replaced. Returns false on OOM or invalid arguments.
  */
-bool config_set(Config *c, const char *key, const char *value);
+bool config_set(Config* c, const char* key, const char* value);
 
 /**
  * @brief Return the value for a key, or NULL if not found.
  *
  * Linear scan. The returned pointer is owned by the Config — do not free it.
  */
-const char *config_get(const Config *c, const char *key);
-
+const char* config_get(const Config* c, const char* key);
 
 /**
  * @brief Remove an entry by key from a heap-owned Config.
  *
  * Returns true if the key was found and removed, false otherwise.
  */
-bool config_delete(Config *c, const char *key);
+bool config_delete(Config* c, const char* key);
 
 /**
  * @brief Print all key-value pairs in a Config to stdout.
  */
-void config_print(const Config *c);
+void config_print(const Config* c);
 
 // ---------------------------------------------------------------------------
 // Status helper
@@ -282,10 +278,10 @@ void config_print(const Config *c);
  * Returns "RUNTIME_STATUS_UNKNOWN_ERROR" for unrecognised values.
  * The returned string is a string literal — never free it.
  */
-const char *runtime_status_string(RuntimeStatus status);
+const char* runtime_status_string(RuntimeStatus status);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // OAAX_RUNTIME_UTILS_H
+#endif  // OAAX_RUNTIME_UTILS_H
