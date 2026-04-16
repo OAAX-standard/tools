@@ -238,30 +238,6 @@ static void test_status_string() {
 }
 
 // ---------------------------------------------------------------------------
-// config_create
-// ---------------------------------------------------------------------------
-
-static void test_config_create() {
-    printf("  test_config_create... ");
-
-    const char *keys[]   = {"device_type", "log_level"};
-    const char *values[] = {"CPU", "2"};
-
-    Config c = config_create(2, keys, values);
-    assert(c.length == 2);
-    assert(c.keys   == keys);
-    assert(c.values == values);
-    assert(strcmp(c.keys[0],   "device_type") == 0);
-    assert(strcmp(c.values[1], "2")           == 0);
-
-    // empty config
-    Config empty = config_create(0, NULL, NULL);
-    assert(empty.length == 0);
-
-    printf("OK\n");
-}
-
-// ---------------------------------------------------------------------------
 // tensors_print (smoke test — just checks it doesn't crash)
 // ---------------------------------------------------------------------------
 
@@ -349,7 +325,6 @@ int test_oaax_utils_main(void) {
     test_compute_data_size();
     test_element_byte_size();
     test_status_string();
-    test_config_create();
     test_config_managed();
     test_tensors_print();
     printf("All oaax_utils tests passed.\n\n");

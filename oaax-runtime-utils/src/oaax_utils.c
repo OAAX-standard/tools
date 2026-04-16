@@ -260,14 +260,6 @@ void tensors_print(const Tensors *tensors) {
 // Config helpers
 // ---------------------------------------------------------------------------
 
-Config config_create(int length, const char **keys, const char **values) {
-    Config c;
-    c.length = length;
-    c.keys   = keys;
-    c.values = values;
-    return c;
-}
-
 Config *config_alloc(void) {
     return (Config *)calloc(1, sizeof(Config));
 }
