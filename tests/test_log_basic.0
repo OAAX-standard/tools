@@ -1,9 +1,0 @@
-2026-04-16 19:42:53.030 -  (INFO): This is an info message.
-2026-04-16 19:42:53.030 -  (WARNING): This is a warning.
-2026-04-16 19:42:53.030 -  (ERROR): This is an error.
-2026-04-16 19:42:53.030 -  (INFO): This is an info message using log_info.
-2026-04-16 19:42:53.030 -  (WARNING): This is a warning using log_warning.
-2026-04-16 19:42:53.030 -  (ERROR): This is an error using log_error.
-2026-04-16 19:42:53.030 -  (INFO): This message is for formatting test: test
-2026-04-16 19:42:53.030 -  (WARNING): This message is for formatting test: 42
-2026-04-16 19:42:53.030 -  (ERROR): This message is for formatting test: 3.140000
