@@ -244,17 +244,49 @@ bool tensors_validate(const Tensors *tensors) {
         printf("tensors_validate: NULL pointer\n");
         return false;
     }
+    if (tensors->num_tensors < 0) {
+        printf("tensors_validate: num_tensors is negative (%d)\n", tensors->num_tensors);
+        return false;
+    }
+
     for (int i = 0; i < tensors->num_tensors; i++) {
         const TensorDescriptor *d = &tensors->tensors[i];
+
+        if (d->name == NULL || d->name[0] == '\0')
+            printf("tensors_validate: WARNING descriptor %d has no name\n", i);
+
+        if (d->rank < 0) {
+            printf("tensors_validate: descriptor %d has negative rank (%d)\n", i, d->rank);
+            return false;
+        }
         if (d->rank > 0 && d->shape == NULL) {
             printf("tensors_validate: descriptor %d has rank %d but shape is NULL\n", i, d->rank);
             return false;
+        }
+        for (int j = 0; j < d->rank; j++) {
+            if (d->shape[j] <= 0) {
+                printf("tensors_validate: descriptor %d shape[%d] is %d (must be > 0)\n", i, j, d->shape[j]);
+                return false;
+            }
         }
         if (d->data_size > 0 && d->data == NULL) {
             printf("tensors_validate: descriptor %d has data_size %zu but data is NULL\n", i, d->data_size);
             return false;
         }
     }
+
+    // warn on duplicate names
+    for (int i = 0; i < tensors->num_tensors; i++) {
+        if (tensors->tensors[i].name == NULL)
+            continue;
+        for (int j = i + 1; j < tensors->num_tensors; j++) {
+            if (tensors->tensors[j].name != NULL &&
+                strcmp(tensors->tensors[i].name, tensors->tensors[j].name) == 0)
+                printf("tensors_validate: WARNING descriptors %d and %d share name '%s'\n",
+                       i, j, tensors->tensors[i].name);
+        }
+    }
+
     return true;
 }
 

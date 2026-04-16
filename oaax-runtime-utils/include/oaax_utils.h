@@ -178,8 +178,9 @@ bool tensors_compare(const Tensors *a, const Tensors *b);
 /**
  * @brief Validate a Tensors for internal consistency.
  *
- * Checks: rank > 0 implies shape != NULL; data_size > 0 implies data != NULL.
- * Returns false and prints the first inconsistency found. NULL input returns false.
+ * Errors (returns false): NULL input, num_tensors < 0, rank < 0, any shape
+ * dimension <= 0, rank > 0 with NULL shape, data_size > 0 with NULL data.
+ * Warnings (printed but do not fail): NULL or empty name, duplicate names.
  */
 bool tensors_validate(const Tensors *tensors);
 

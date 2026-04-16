@@ -292,31 +292,67 @@ static void test_tensors_find() {
 static void test_tensors_validate() {
     printf("  test_tensors_validate... ");
 
-    // valid tensors
-    Tensors *t = tensors_alloc(1);
     float data[4] = {0};
     int shape[] = {4};
+
+    // valid tensors
+    Tensors *t = tensors_alloc(1);
     tensors_set(t, 0, "x", DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
     assert(tensors_validate(t) == true);
     t->tensors[0].data = NULL;
     tensors_free(t);
 
+    // NULL input
+    assert(tensors_validate(NULL) == false);
+
+    // num_tensors < 0
+    Tensors *neg_count = tensors_alloc(0);
+    neg_count->num_tensors = -1;
+    assert(tensors_validate(neg_count) == false);
+    neg_count->num_tensors = 0;
+    tensors_free(neg_count);
+
+    // negative rank
+    Tensors *neg_rank = tensors_alloc(1);
+    neg_rank->tensors[0].rank = -1;
+    assert(tensors_validate(neg_rank) == false);
+    neg_rank->tensors[0].rank = 0;
+    tensors_free(neg_rank);
+
     // rank > 0 but shape == NULL
     Tensors *bad_shape = tensors_alloc(1);
     bad_shape->tensors[0].rank = 2;
-    bad_shape->tensors[0].shape = NULL;
     assert(tensors_validate(bad_shape) == false);
     tensors_free(bad_shape);
+
+    // shape dimension <= 0
+    int bad_dim[] = {4, 0};
+    Tensors *bad_dim_t = tensors_alloc(1);
+    tensors_set(bad_dim_t, 0, "x", DATA_TYPE_FLOAT, 2, bad_dim, NULL, 0);
+    assert(tensors_validate(bad_dim_t) == false);
+    tensors_free(bad_dim_t);
 
     // data_size > 0 but data == NULL
     Tensors *bad_data = tensors_alloc(1);
     bad_data->tensors[0].data_size = 16;
-    bad_data->tensors[0].data = NULL;
     assert(tensors_validate(bad_data) == false);
     tensors_free(bad_data);
 
-    // NULL input
-    assert(tensors_validate(NULL) == false);
+    // warning: no name (does not fail)
+    Tensors *no_name = tensors_alloc(1);
+    tensors_set(no_name, 0, NULL, DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+    assert(tensors_validate(no_name) == true);
+    no_name->tensors[0].data = NULL;
+    tensors_free(no_name);
+
+    // warning: duplicate names (does not fail)
+    Tensors *dup = tensors_alloc(2);
+    tensors_set(dup, 0, "out", DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+    tensors_set(dup, 1, "out", DATA_TYPE_FLOAT, 1, shape, data, sizeof(data));
+    assert(tensors_validate(dup) == true);
+    dup->tensors[0].data = NULL;
+    dup->tensors[1].data = NULL;
+    tensors_free(dup);
 
     printf("OK\n");
 }
