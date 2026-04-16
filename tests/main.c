@@ -18,6 +18,7 @@ void test_utils_main();
 void test_threading_main();
 void test_lib_loader_main();
 void test_sysinfo_main();
+int  test_oaax_utils_main();
 
 Logger *logger;
 
@@ -33,6 +34,7 @@ int main() {
   test_threading_main();
   test_lib_loader_main();
   test_sysinfo_main();
+  test_oaax_utils_main();
   printf("All tests passed.\n");
   // Close the logger at the end of the tests
   close_logger(logger);
