@@ -33,7 +33,10 @@ add_executable(c_utilities_tests
     test_threading.c
     test_lib_loader.c
     test_sysinfo.c
+    test_oaax_utils.c
 )
+
+target_include_directories(c_utilities_tests PRIVATE ../oaax-runtime-utils/include)
 
 target_link_libraries(c_utilities_tests ${PLATFORM_LIBS})
 
@@ -43,6 +46,13 @@ add_subdirectory(
     ${CMAKE_CURRENT_BINARY_DIR}/c_utilities
 )
 target_link_libraries(c_utilities_tests c_utilities)
+
+# Link OAAX Runtime Utils
+add_subdirectory(
+    ../oaax-runtime-utils
+    ${CMAKE_CURRENT_BINARY_DIR}/oaax_runtime_utils
+)
+target_link_libraries(c_utilities_tests oaax_utils)
 
 # Link mini shared library project
 add_subdirectory(
