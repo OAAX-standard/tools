@@ -209,10 +209,9 @@ Config config_create(int length, const char **keys, const char **values);
 /**
  * @brief Allocate an empty heap-owned Config.
  *
- * n is a hint for the expected number of entries; pass 0 if unknown.
  * Must be freed with config_free(). Returns NULL on OOM.
  */
-Config *config_alloc(int n);
+Config *config_alloc(void);
 
 /**
  * @brief Free a heap-owned Config created by config_alloc().
