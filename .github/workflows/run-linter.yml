@@ -1,10 +1,10 @@
-name: Run cpplint
+name: Run clang-format
 
 on:
   push:
 
 jobs:
-  run-linter:
+  clang-format:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -12,10 +12,12 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install cpplint
+      - name: Install clang-format
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cpplint
+          sudo apt-get update -qq
+          sudo apt-get install -y clang-format
 
-      - name: Run linter
-        run: find . -regex '.*\.\(cpp\|cc\|c\|h\|hpp\)' -exec cpplint --filter=-readability/casting {} +
+      - name: Check formatting
+        run: |
+          find . -not -path './.git/*' -regex '.*\.\(c\|h\|cpp\|hpp\)' \
+            -exec clang-format --dry-run --Werror {} +

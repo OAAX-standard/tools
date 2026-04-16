@@ -19,5 +19,4 @@ REM Build the project
 cmake --build . --config Debug
 
 REM Run the unit tests binary
-REM NOTE: Change the path to the unit tests binary if necessary
-.\Debug\c_utilities_tests.exe
+.\Debug\oaax_utils_tests.exe

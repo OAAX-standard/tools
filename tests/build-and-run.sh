@@ -26,5 +26,4 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE
 cmake --build . --config Debug
 
 # Run the unit tests binary
-# NOTE: Change the path to the unit tests binary if necessary
-./c_utilities_tests
+./oaax_utils_tests
