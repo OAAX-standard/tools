@@ -287,8 +287,7 @@ static void test_tensors_print() {
 static void test_config_managed() {
     printf("  test_config_managed... ");
 
-    // alloc empty
-    Config *c = config_alloc();
+    Config *c = config_alloc(4);
     assert(c != NULL);
     assert(c->length == 0);
 
@@ -309,13 +308,10 @@ static void test_config_managed() {
     assert(c->length == 2);
     assert(strcmp(config_get(c, "device"), "GPU") == 0);
 
-    // add: new key succeeds, duplicate key fails
-    assert(config_add(c, "cache_dir", "/tmp") == true);
+    // set new key
+    assert(config_set(c, "cache_dir", "/tmp") == true);
     assert(c->length == 3);
     assert(strcmp(config_get(c, "cache_dir"), "/tmp") == 0);
-    assert(config_add(c, "device", "NPU") == false);  // already exists
-    assert(c->length == 3);
-    assert(strcmp(config_get(c, "device"), "GPU") == 0);  // unchanged
 
     // delete existing key
     assert(config_delete(c, "log_level") == true);
@@ -331,8 +327,6 @@ static void test_config_managed() {
     // NULL safety
     assert(config_set(NULL, "k", "v") == false);
     assert(config_set(c, NULL, "v") == false);
-    assert(config_add(NULL, "k", "v") == false);
-    assert(config_add(c, NULL, "v") == false);
     assert(config_delete(NULL, "device") == false);
     assert(config_delete(c, NULL) == false);
 

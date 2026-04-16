@@ -209,10 +209,10 @@ Config config_create(int length, const char **keys, const char **values);
 /**
  * @brief Allocate an empty heap-owned Config.
  *
- * All subsequent mutations (config_set, config_delete, config_extend) on this
- * Config are safe. Must be freed with config_free(). Returns NULL on OOM.
+ * n is a hint for the expected number of entries; pass 0 if unknown.
+ * Must be freed with config_free(). Returns NULL on OOM.
  */
-Config *config_alloc(void);
+Config *config_alloc(int n);
 
 /**
  * @brief Free a heap-owned Config created by config_alloc().
@@ -237,13 +237,6 @@ bool config_set(Config *c, const char *key, const char *value);
  */
 const char *config_get(const Config *c, const char *key);
 
-/**
- * @brief Add a new key-value pair. Fails if the key already exists.
- *
- * Use config_set() to insert-or-overwrite. Returns false if the key is already
- * present, arguments are invalid, or allocation fails.
- */
-bool config_add(Config *c, const char *key, const char *value);
 
 /**
  * @brief Remove an entry by key from a heap-owned Config.
