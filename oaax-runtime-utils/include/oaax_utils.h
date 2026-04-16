@@ -238,11 +238,12 @@ bool config_set(Config *c, const char *key, const char *value);
 const char *config_get(const Config *c, const char *key);
 
 /**
- * @brief Merge all entries from src into dst.
+ * @brief Add a new key-value pair. Fails if the key already exists.
  *
- * Existing keys in dst are overwritten with src values. Returns false on OOM.
+ * Use config_set() to insert-or-overwrite. Returns false if the key is already
+ * present, arguments are invalid, or allocation fails.
  */
-bool config_extend(Config *dst, const Config *src);
+bool config_add(Config *c, const char *key, const char *value);
 
 /**
  * @brief Remove an entry by key from a heap-owned Config.
