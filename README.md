@@ -1,5 +1,16 @@
 # OAAX tools
 
+> **This repository is archived and no longer maintained (as of 2026-10-20).**
+> It will not receive updates, issues or pull requests. OAAX 2.0 runtimes do not need it:
+> the [reference implementation](https://github.com/OAAX-standard/reference-implementation)
+> is self-contained. Fork it if you want to keep using the code below.
+>
+> **Legacy `c-utilities`:** the OAAX 1.x/early 2.0 runtimes (`reference-implementation`,
+> `nvidia-acceleration`, `sima-acceleration`, `benchmarks`) pin it as a git submodule at commits
+> that live only on the [`add-more-utilities`](https://github.com/OAAX-standard/tools/tree/add-more-utilities)
+> branch (`a138313`, `390a837`), not on `main`. That branch must never be deleted.
+> `main` holds the later `oaax-runtime-utils` rewrite, which no runtime uses yet.
+
 This repository provides utility libraries for developing, testing, and using OAAX runtimes and toolchains.
 
 [![Run tests](https://github.com/OAAX-standard/tools/actions/workflows/run-tests.yml/badge.svg)](https://github.com/OAAX-standard/tools/actions/workflows/run-tests.yml)
